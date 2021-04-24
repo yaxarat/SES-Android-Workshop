@@ -8,15 +8,14 @@ In this workshop, you will learn a basic Android app featuring a “login” scr
 The resulting app will feature the following:
 * A single activity app, with 2 fragments representing the 2 screens
 * [Jetpack Compose](https://developer.android.com/jetpack/compose), the Android’s modern toolkit for building native UI
-* Reactive MVI architecture using [Kotlin flows](https://developer.android.com/kotlin/flow)
 * Asynchronous programming using [Kotlin Coroutines﻿](https://www.youtube.com/watch?v=ZTDXo0-SKuU)
 * Local data storage for user credentials using [DataStore](https://developer.android.com/topic/libraries/architecture/datastore)
 * Fragment to fragment data transfer using [Results API](https://developer.android.com/guide/fragments/communicate#fragment-result)
 * Real networking & JSON parsing for login using modern Android libraries
 
 ## Getting Started
-- Make sure you are in the `Start-here` branch, then open and run the project in Android Studio either on a [physical device or emulator](https://developer.android.com/training/basics/firstapp/running-app).
-- You can also switch to the  `Completed`  branch if you’d like to see project after we’re finished.
+- Open the `Start` project folder in Android Studio and run it either on a [physical device or emulator](https://developer.android.com/training/basics/firstapp/running-app).
+- You can also open the  `Completed`  branch if you’d like to see project after we’re finished.
 - Check out `Extra` branch for Data Store implementation.
 
 ## Step-by-Step Instructions
