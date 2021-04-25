@@ -18,7 +18,8 @@ You will need to set up your Android development environment and launch the `Sta
 If everything goes right, you should see the following screen when you hit “Run app”!
 
 <img src="setup-run.png" width="350">
-
+<br>
+<br>
 <img src="setup-app.png" width="350">
 
 ## IDE Setup (Optional)

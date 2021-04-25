@@ -1,24 +1,155 @@
 ## Login Screen UI
-This section covers building the login screen's UI. In Android, UIs are written in XML directly or by using a visual editor.
 
-- [Layout Editor](#layout-editor)
-- [Learning ConstriantLayout](#learning-constriantlayout)
-- [Setting Attributes](#setting-attributes)
-- [Placing the Username Field](#placing-the-username-field)
-- [Placing the Password Field](#placing-the-password-field)
-- [Viewing the XML Representation](#viewing-the-xml-representation)
-- [Placing the Sign In Button](#placing-the-sign-in-button)
-- [Placing the Progress Bar](#placing-the-progress-bar)
-- [Initial UI Complete!](#initial-ui-complete)
+This section covers building the login screen's UI. In Android, UIs were written alsmot exclusively in XML directly or by using a visual editor. However, the newest and definetly the standard way moving forward is to use Jetpack Compose. Jetpack Compose is a declarative way to write UI codes using Kotlin. Besides being simpler, it has many other advantages you can read about [here](https://developer.android.com/jetpack/compose). Or if you want to dig deeper into the subjet, Google also offers [a pathway program](https://developer.android.com/courses/pathways/compose).
 
-### Layout Editor
+### Composable functions
 
-[Official Docs - Writing Layouts](https://developer.android.com/guide/topics/ui/declaring-layout)
+Jetpack Compose is built around composable functions. These functions let you define your app's UI programmatically by describing its shape and data dependencies. To create a composable function, just add the `@Composable` annotation to the function name, like so:
+```kotlin
+@Composable
+fun LoginEditText() { ... }
+```
 
-[Official Docs - Using the Layout Editor](https://developer.android.com/studio/write/layout-editor)
+Keep in mind, composable functions can only be called within the scope of other composable functions.
 
-In Android, we compose _Views_ (text labels, input fields, buttons, etc.) into a
-_Layout_ which determines placement on the screen (stacked horizontally, vertically, on top of each other, etc.)
+And from within these composable functions, you can use one or more of other custom or default composable UI components to start composing your views. For example, if you wanted to create a row of 3 texts and a button at the bottom, we can do so like this:
+```kotlin
+@Composable
+fun ThreeTextAndOneButton() {
+    Column(horizontalAlignment = CenterHorizontally) {
+        // Text is also a composable function.
+        Text("Text 1")
+        Text("Text 2")
+        Text("Text 3")
+        // So is Button.
+        Button(onClick = { }) {
+            Text("A Button Text")
+        }
+    }
+}
+```
+
+If you were to run the app with above composable as its UI, you'd see something like this:
+<img src="login-ui-column.png" width="400">
+
+Notice how the text and other UI elements are all aligned to the left edge of the screen?
+That is the default behavior, and we can change it using something called `modifier`. 
+
+`modifier` lets you decorate or add behavior to Compose UI elements. For example, backgrounds, padding and click event listeners decorate or add behavior to rows, text or buttons.
+
+Let's try and add some left padding to the child views inside `Column` using `modifier`:
+```kotlin
+@Composable
+fun ThreeTextAndOneButton() {
+    Column(modifier = Modifier.padding(start = 12.dp)) {
+        Text("Text 1")
+        Text("Text 2")
+        Text("Text 3")
+        // So is Button.
+        Button(onClick = { }) {
+            Text("A Button Text")
+        }
+    }
+}
+```
+<img src="login-ui-column-leftpadding.png" width="400">
+
+Nice! Now there are some breathing room.
+
+> *What is dp in 12.dp here?* dp is a density-independent Pixels - an abstract unit that is based on the physical density of the screen. These units are relative to a 160 dpi screen, so one dp is one pixel on a 160 dpi screen. The ratio of dp-to-pixel will change with the screen density, but not necessarily in direct proportion. This is the standard measurement unit for UIs in android development to support multiple devices with different screen sizes.
+
+I hope you are starting to get a hang of how jetpack compose works! This ia a topic that goes deep and wide. So I won't go over every detail here, but as we progress further, we will discover more and more of its awesome features.
+
+### Divide and conqure
+
+Nobody likes duplicated code, as it increases upkeep cost and redundant development time. Luckily, compose is all about making UIs more modular and reusable.
+
+First, let's start by taking a look at what we are trying to create:
+
+<img src="login-ui-div.png" width="400">
+
+We can see that roughly, there are 4 types of UI components we would need to create. Some, we can create just using what comes standard with Jetpack Compose library. Others, we need to create ourselves.
+
+1. Text component to hold our bank's name
+1. Text input component to accept user name and password
+1. Check box component to let users decide if they want their username rememebred
+1. And finally the sign in button itself
+
+Let's start by creating what lloks the easiest, the text component.
+
+### Text component
+
+I don't think you are suprised to find that something as essential as text component comes standard with the library. And to use it, all we need to do is this:
+
+* Go to `LoginFragment.kt`, and inside `setContent {...}` block, add the following:
+```kotlin
+/**
+*  setContent set the Jetpack Compose UI content for this view.
+*/
+setContent {
+    Text(
+        text = "Summit Bank"
+    )
+}
+```
+The `setContent` block defines the activity's layout. Instead of defining the layout contents with the traditional XML file, we call composable functions. Jetpack Compose library then transform these composable functions into the app's UI elements. Thus overcomming the chicken or the egg problem with composable functions needing to be called within another composable function.
+
+
+If you run the app now, you will see something like this:
+
+
+<img src="login-ui-summitbank1.png" width="400">
+
+
+Text is correct, but the design in not quite, what we want.
+
+Let's think what we are missing. First of all, we want all of our components to be inside a `Column` since they need to be stacked vertically. Also, we would want to use modifiers to decorate the components.
+
+Now with that in mind, let's try something like this:
+```kotlin
+/**
+ * Set the Jetpack Compose UI content for this view.
+ */
+setContent {
+    /**
+     * A layout composable that places its children in a vertical sequence.
+     */
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = "Summit Bank",
+            style = MaterialTheme.typography.h4,
+            fontWeight = FontWeight.Black,
+            modifier = Modifier.padding(vertical = 32.dp)
+        )
+    }
+}
+```
+
+We now wrapped the `Text` component inside a `Column` colmponent. We also used modifier and other component parameters to decorate them. Here is what each of them do:
+
+**Column**
+* `horizontalAlignment` parameter to defin child component alignment. Since we want our views to be centered, we chose `Alignment.CenterHorizontally`.
+* `Modifier.fillMaxWidth()` a modifier that tells column to take up the entire width of the screen.
+
+**Text**
+* `text` text value we want to show.
+* `style` parameter that decides what type of text style we want to use. You can see all the options [here](https://material.io/design/typography/the-type-system.html#type-scale)
+* `fontWeight` the weight we want our font to have. We want a very bold look, so we went with `Black` here.
+* `Modifier.padding(vertical = 32.dp)` we add 32.dp of padding to both top and bottom of our Text component so others views we add later won't be touching.
+
+Let's run and see what we made!
+
+
+<img src="login-ui-title.png" width="400">
+
+Nice! We are off to a good start. Now let's tackle a bit more complicated text input components.
+
+### OutlinedTextField
+
+Lucky us! This component is also pre-built withint the library. We can add it to our view by appending it to the end of Text component like so:
 
 Our login screen's UI will go into `app/src/main/res/layout/activity_login.xml` (the file has already been created). In general, all **res**ources
 for an Android app goes under `app/src/main/res/`, this includes XML layout files, but also things like images, colors, and sound files.
@@ -30,16 +161,7 @@ If they are not showing, you can enable the previews for the bottom bar and the 
 
 <img src="login-layout-decorations.png" width="400">
 
-We can also look at the different components of the layout editor:
 
-<img src="login-editor.png" width="800">
-
-1. A `View` palette - components we can use to build your UI with.
-2. The `Component Tree` - a visual hierarchy of the _Layouts_ and _Views_ in our UI.
-3. Various settings we can configure on the UI preview (screen size, device, Android version, theme, etc.).
-4. A preview of all visible components.
-5. A wireframe preview of all components (e.g. will also show initially invisible items, like loading spinners)
-6. The `Attributes` panel - shows detailed information about the currently selected item.
 
 ### Learning ConstriantLayout
 We're going to use a [ConstraintLayout](https://developer.android.com/training/constraint-layout) to design our login screen.
