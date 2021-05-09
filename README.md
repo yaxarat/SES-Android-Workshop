@@ -15,8 +15,8 @@ The resulting app will feature the following:
 
 ## Getting Started
 - Open the `Start` project folder in Android Studio and run it either on a [physical device or emulator](https://developer.android.com/training/basics/firstapp/running-app).
-- You can also open the  `Completed`  branch if you’d like to see project after we’re finished.
-- Check out `Extra` branch for Data Store implementation.
+- You can also open the  `Completed`  folder if you’d like to see project after we’re finished.
+- Check out `Extra` folder for data persistence implementation.
 
 ## Step-by-Step Instructions
 See the [Step-by-Step instructions](instructions/step-by-step/README.md) for a full written version of the workshop, including code, screenshots, and helpful links!
