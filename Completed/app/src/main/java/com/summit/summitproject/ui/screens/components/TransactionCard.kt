@@ -16,10 +16,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.summit.summitproject.R
+import com.summit.summitproject.prebuilt.model.Transaction
 
+/**
+ * A reusable UI component that shows a card UI with a image, and some detail text to the right.
+ * @param transaction a [Transaction] object that contains detail for this transaction.
+ * @param modifier a [Modifier] that can be passed in to modify the card UI.
+ */
 @Composable
 fun TransactionCard(
-    modifier: Modifier
+    transaction: Transaction,
+    modifier: Modifier = Modifier
 ) {
     Card(
         shape = MaterialTheme.shapes.medium,
@@ -47,12 +54,12 @@ fun TransactionCard(
                     .padding(horizontal = 16.dp)
             ) {
                 Text(
-                    text = "Merchant",
+                    text = transaction.merchant,
                     style = MaterialTheme.typography.body1,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = "$0.00",
+                    text = transaction.amount,
                     style = MaterialTheme.typography.body1
                 )
             }
