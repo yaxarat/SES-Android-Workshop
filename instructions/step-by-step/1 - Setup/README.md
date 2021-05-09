@@ -14,20 +14,20 @@ You will need to set up your Android development environment and launch the `Sta
 4. Run the project on a [physical device or emulator](https://developer.android.com/training/basics/firstapp/running-app).
 
 If everything goes right, you should see the following screen when you hit “Run app”!
-<img src="assets/setup-run.png" width="400" />
+<img src="assets/setup-run.png" width="500" />
 
-![](assets/setup-app.png)<!-- {"width":335} -->
+<img src="assets/setup-app.png" width="500" />
 
 ## IDE Setup (Optional)
 If you want the project structure to reflect the same file layout as what I will be using through    out the session, make sure to stay on or switch to `Android` and not `Project`.
 
-![](assets/ide-project.png)<!-- {"width":278} -->
+<img src="assets/ide-project.png" width="500" />
 
 I'd also recommend enabling auto-imports, which will automatically add the `import ...`
 lines at the top of your code files as you write code.
 1. Open the `Preferences` (`Settings` on Windows) -> `Editor -> General -> Auto-Import`
 2. Enable `Add unambiguous imports...` and `Optimize imports...`
 
-![](assets/ide-preferences.png)<!-- {"width":354} -->
+<img src="assets/ide-preferences.png" width="500" />
 
 [Back to Index](../README.md)
