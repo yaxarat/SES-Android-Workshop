@@ -1,297 +1,518 @@
-# Login Screen Code
-This section covers adding behaviors to our login screen by writing Java code:
-- Disable the "Sign In" button unless a username & password are entered.
-- Show a simple popup message when the button is pressed.
+# Login UI Logic<!-- {"fold":true} -->
+This section covers adding behaviors to our login screen by writing Kotlin business logic.
+Here are the business logic we will be implementing:
 
-All behavioral logic is written in actual code, like Java.
+* Disable the "Sign In" button unless a username & password are entered.
+* Show loading dialog when the login “api call” is being made.
 
-The next section will cover actually hooking the Sign In button up to some network
-calls to actually do a "real" login.
+## ViewModel<!-- {"fold":true} -->
+Our business logic for the login screen will be living inside a `viewModel` class that we will explore shortly. But before we go on, let’s review what view model is all about.
 
-- [Code Setup](#code-setup)
-- [Disabling the Sign In Button](#disabling-the-sign-in-button)
-- [Button Click Functionality](#button-click-functionality)
-- [Initial Code Complete!](#initial-code-complete)
+You can read all about viewModel here in the [official docs](https://developer.android.com/topic/libraries/architecture/viewmodel), but I way layout the gist here. 
 
-### Code Setup
-Application code goes under `app/src/main/java`. For this login screen specifically,
-this will go into `app/src/main/java/com.summit.summitproject/LoginActivity`.
+The [Android framework manages the lifecycles of UI](https://developer.android.com/guide/components/activities/activity-lifecycle), such as our `LoginFragment`. The framework may decide to destroy or re-create a UI in response to certain user actions or device events that are completely out of your control. One such example is device screen rotation (a.k.a configuration change).
 
-<img src="login-code-location.png" width="400">
+If the system destroys or re-creates a UI, any transient UI-related data you store in them is lost. For example, your app may include a list of user data (transaction details in our case). When the UI is re-created for a configuration change, the new UI has to re-fetch the data all over again. And if the data can’t be fetched, like user entered password/username, it will be lost forever.
 
-Broadly speaking, "screens" in Android are called "activities" and the `onCreate` method
-of an `Activity` is called when the screen is about to be shown for the first time to the user,
-so you'll generally find that it's used to set up initialization and behavioral logic for the screen.
+Therefore, it's easier and more efficient to separate out view data ownership from UI logic to something else. This is where `viewModel` comes in.
 
-We're going to need references to our username, password, button, and progress bar components, so we'll
-define them as member variables on the object. There's also the title, but we won't need to do anything with it.
+In Jetpack Compose, you can use the `ViewModel` to expose the state in an observable form. What this means in practice is basically to move our states one more level up, from `LoginFragment` into `LoginViewModel`.
 
-```java
-public class LoginActivity extends AppCompatActivity {
-    private EditText username;
-    private EditText password;
-    private Button signIn;
-    private ProgressBar progress;
+So these
+```kotlin
+val usernameTextFieldValue = remember { mutableStateOf("") }
+val passwordTextFieldValue = remember { mutableStateOf("") }
+```
+Will soon be moving into a `viewModel` so we can observe it directly from there.
+
+## Create LoginViewModel
+In the same folder as our `LoginFragment`, locate and open `LoginViewModel` class. This is a pre-built `viewModel` class that we will use to explore this idea further. Later in the session, we will create another `viewModel` from scratch.
+
+![](assets/Kapture%202021-05-01%20at%2017.02.49.gif)
+
+Once you open the file, you should see some pre-written codes with some explanatory comments on it.
+
+Let’s review them one by one from bottom up:
+
+### State
+```kotlin
+data class LoginState(
+    val username: String = "",
+    val password: String = "",
+    val rememberMe: Boolean = false,
+    val enableSignIn: Boolean = false,
+    val handlingSignIn: Boolean = false,
+    val accountInfo: AccountInfo? = null
+)
 ```
 
-If any of the types show up red, you'll need to do a `import`. Put your cursor on the text and use the key command to add the import
-to the file.
+Any variable which is used to depict what a view component is currently doing is its state. View is currently Username entered, Password entered, Login Button enabled, Is User Logged In, etc. Altogether, these constitute state of any screen. You can think of this as a snapshot of current screen and all of its variables.
 
-Also check the `Setup` section of the instructions to see how to set automatic imports up.
+Here is the explanation for each state values and what we use them for:
+* `username` the currently entered username
+* `password` the currently entered password
+* `rememberMe` if the username should be remembered for next time
+* `enableSignIn` if the sign in button should be enabled
+* `handlingSignIn` if the login api being actively called/listened for (used for loading indicator)
+* `accountInfo` the result we get back form login api. We pass this to the details screen.
 
-<img src="login-code-red-import.png" width="400">
+### ViewModel
+```kotlin
+class LoginViewModel: ViewModel() {
 
-Inside of `onCreate` we see a call to `setContentView`:
-```java
-    setContentView(R.layout.activity_login);
-```
+    private val loginService: LoginService = LoginServiceImpl()
 
-This method call tells Android which layout file to display for this screen. You can think of the `R.layout.activity_login` as
-short for "Resources -> layout -> activity_login.xml".
+    val state = mutableStateOf(LoginState())
 
-It's only **after** the layout has been specified that we can assign (bind) our `View` variables. Use `findViewById` to
-assign the variables to the UI components in the layout. As a parameter, it takes the view's ID that it was given in XML.
-
-It uses a similar `R.id.` syntax, where the ID you use is the one set in the `id` field in XML. For example, our
-Sign In button had an ID of `sign_in` in XML, so we pass `R.id.sign_in` to `findViewById`.
-
-<img src="login-code-id.png" width="600">
-
-```java
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        
-        username = findViewById(R.id.username);
-        password = findViewById(R.id.password);
-        signIn = findViewById(R.id.sign_in);
-        progress = findViewById(R.id.progressBar);
-    }
- ```
-
-### Disabling the Sign In Button
-Our first goal is to disable our Sign In button unless text has been inputted into both the
-username and password fields.
-
-We can programmatically control the behavior of the UI by interacting with the variables we've set.
-
-For example, we can initially disable our Sign In button by calling:
-```java
-    signIn.setEnabled(false);
-```
-
-What we'd like to do is have a small bit of code run every time the user types in either the
-username or password fields to determine if the button should be enabled or not.
-
-We can achieve this by setting [TextWatcher](https://developer.android.com/reference/android/text/TextWatcher)s on our `username` and `password` variables.
-
-A `TextWatcher` is an `interface` that an `EditText` can call each time the user types a character. An object which implements this interface
-receives callbacks (e.g. methods are called automatically) before and after the newly typed character is displayed on the UI.
-
-There are a few ways to implement an `interface` in Java. In this case, let's create a shared object / variable which implements
-the `TextWatcher` interface that will be used for both the `username` and `password` fields.
-
-Below the `onCreate` method, we'll create a new `TextWatcher` variable to directly implement the interface (called an anonymous class):
-```java
-    private TextWatcher textWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            // Unused
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            // Unused
-        }
-    };
-```
-
-We're only going to use `onTextChanged` method, which is the generic "some text has changed" callback, but any of the three methods would do.
-
-We can get the text from the `username` & `password` by calling `.getText().toString()`. The `toString()` is required here because
-`getText()` returns an [Editable](https://developer.android.com/reference/android/text/Editable) (not a `String`). The `Editable` is a mutable
-character array, which is more efficient than using a (immutable) `String` to represent character data that changes frequently (in this case, every time the user types).
-
-We can check if both strings are non-empty to decide to enable our button or not:
-```java
-    @Override
-    public void afterTextChanged(Editable s) {
-        String inputtedUsername = username.getText().toString();
-        String inputtedPassword = password.getText().toString();
-        boolean enableButton = inputtedUsername.length() > 0 && inputtedPassword.length() > 0;
-
-        signIn.setEnabled(enableButton);
-    }
-````
-
-Finally, we need to set our new `textWatcher` variable on our two `username` & `password` variables for it to take effect.
-
-This can go in `onCreate`:
-```
-    username.addTextChangedListener(textWatcher);
-    password.addTextChangedListener(textWatcher);
-```
-
-And test it!
-
-<img src="login-text-enabled.gif" width="350">
-
-Here's the code so far for the `LoginActivity`:
-```java
-public class LoginActivity extends AppCompatActivity {
-    private EditText username;
-    private EditText password;
-    private Button signIn;
-    private ProgressBar progress;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-
-        username = findViewById(R.id.username);
-        password = findViewById(R.id.password);
-        signIn = findViewById(R.id.sign_in);
-        progress = findViewById(R.id.progressBar);
-
-        signIn.setEnabled(false);
-
-        username.addTextChangedListener(textWatcher);
-        password.addTextChangedListener(textWatcher);
-    }
-
-    private TextWatcher textWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            String inputtedUsername = username.getText().toString();
-            String inputtedPassword = password.getText().toString();
-            boolean enableButton = inputtedUsername.length() > 0 && inputtedPassword.length() > 0;
-
-            signIn.setEnabled(enableButton);
-        }
-    };
+    private val currentState get() = state.value
 }
 ```
 
-### Button Click Functionality
-The `TextWatcher` allows us to receive events (method callbacks) as the user types in the username & password fields.
+This is the `viewModel` class that will keep all of the business logic for our login screen. Here are the quick explanation of above three values so you will understand why we use which throughout this section:
 
-There's also a similar interface we can implement to receive callbacks when the user taps on the Sign In button (when it's enabled)
--- the [OnClickListener](https://developer.android.com/reference/android/view/View.OnClickListener). Unlike the `TextWatcher`, only one
-method has to be implemented: `onClick` (e.g. what code do you want to run when the user taps on the button).
+* `loginService`: This is the pre-built networking service that will be handling our login API call. Here we are initializing it to be used down the road.
+* `state` this is a reference to an instance of `LoginState` we covered earlier. Here, we are creating a new initial state (all values are default as defined in the `LoginState` data class), and wrapping it in a `mutableStateOf` just as we did in the composable functions. This is to allow our composable functions to observe changes made to the state inside the `viewModel` and recompose the UI accordingly.
+* `currentState` this value re-computes the current state every time it is called. This allows us to get a snapshot instance of the current state value so we can use that as a base for us to modify certain state values.
 
-We won't need a separate variable for our `OnClickListener`, since we'll only use it for our single button. So, we can define it
-and set it in the same expression:
+These may sound a bit confusing right now, but that is okay. It will become more clear as we progress through this section.
+
+### State hoisting (again!)
+Let’s start by moving our state another level up, this time into the `LoginViewModel` from the `LoginFragment`.
+
+So change these two state values in `LoginFragment` from
+
+```kotlin
+val usernameTextFieldValue = remember { mutableStateOf("") }
+val passwordTextFieldValue = remember { mutableStateOf("") }
 ```
-    username.addTextChangedListener(textWatcher);
-    password.addTextChangedListener(textWatcher);
-    
-    signIn.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            // Do something when the button is clicked
+
+to
+
+```kotlin
+val usernameTextFieldValue: String = viewModel.state.value.username
+val passwordTextFieldValue: String = viewModel.state.value.password
+```
+
+Let’s re-cap what just happened: Here, instead of having the current **state** of our UI directly inside the `fragment`, we are now referencing it from the `viewModel`. Notice how we are observing the state object within the `viewModel`. Since our state object is `mutableStateOf` , it allows our UI to automatically recompose to the latest state changes to reflect the correct UI.
+
+However, there are more modification we need to make to the rest of our fragment code to make this new change work.
+
+Notice our `textField` composable are throwing an error since the new argument we provide does not match what they are expecting. Our `textFieldValue` and `onTextFieldValueChange` are expecting a `mutableStateOf` `string`, but our `usernameTextFieldValue` and `passwordTextFieldValue` is now just a straight up `string`.
+
+One fix is easy: since `textFieldValue` is a `String`, just remove `.value` after our text field values for both `LoginTextField` like so:
+
+```kotlin
+LoginTextField(
+    label = "Username",
+    textFieldValue = usernameTextFieldValue, // used to be ...eldValue.value
+    onTextFieldValueChange = { newUsername ->
+        usernameTextFieldValue.value = newUsername
+    },
+    ...
+```
+
+Next up is `onTextFieldValueChange`. If you remember, this is a function that takes in the new username/password string and assigns it to the `mutableStateOf` those two fields. Which means, we will now need to pass a function here that allows us to do the same, except this time the states for those two fields are located inside the `viewModel`.
+
+Head to `LoginViewModel` and add following functions inside the `viewModel` class under the `currentState` variable:
+
+```kotlin
+fun enterUsername(username: String) {
+    state.value = currentState.copy(username = username)
+}
+
+fun enterPassword(password: String) {
+    state.value = currentState.copy(password = password)
+}
+```
+
+**Take a time to understand what is happening here since this will be the foundational idea of how we will manipulate the composable UI by modifying the state.**
+
+1. We accept new state value from the user, here it is `username` and `password` parameters.
+2. We take a snapshot of current state by using `currentState`
+3. We modify only the state values that actually changed, while keeping everything else the same. `copy` operator of the `LoginState` data class does exactly this by moving over everything while only modifying what we specify: `currentState.copy(username = username)`
+4. We assign the updated state object to our `mutableStateOf(LoginState())` so its changed can be observed by our UI: `state.value = currentState.copy(username = username)`
+
+This is how we accept new intention to change the state by the user, and modify our state accordingly.
+
+Since these function are exactly the type expected by `onTextFieldValueChange` parameter for our text fields, let go and update them to uses these:
+
+```kotlin
+LoginTextField(
+    label = "Username",
+    textFieldValue = usernameTextFieldValue,
+    onTextFieldValueChange = { newUsername ->
+        viewModel.enterUsername(newUsername)
+    },
+    ...
+)
+
+LoginTextField(
+    label = "Password",
+    textFieldValue = passwordTextFieldValue,
+    onTextFieldValueChange = { newPassword ->
+        viewModel.enterPassword(newPassword)
+    },
+    ...
+)
+```
+
+Run the app one more time and check everything is working as usual.
+
+### Calling login API
+Remember our login button composable?
+
+```kotlin
+Button(
+    onClick = {
+
+    },
+    modifier = Modifier
+        .padding(horizontal = 32.dp)
+        .fillMaxWidth()
+) {
+    Text(
+        text = "Sign In",
+        style = MaterialTheme.typography.button
+    )
+}
+```
+
+Now is the time to provide its `onClick` function. We will follow the same pattern as how we updated the username and password fields earlier.
+
+In `LoginViewModel` add following:
+
+```kotlin
+fun signIn() {
+    performSignIn(
+        username = currentState.username,
+        password = currentState.password
+    )
+
+    state.value = currentState.copy(
+        enableSignIn = false,
+        handlingSignIn = true
+    )
+}
+```
+
+> `performSignIn` does not exist yet, but it is useful to have it here now to see the flow. 
+
+Here, we want to *perform sign in* with the current username and password, and also disable sign in button and show loading indicator while the sign in is being performed.
+
+Now, add the `performSignIn` function below like so:
+
+```kotlin
+private fun performSignIn(
+    username: String,
+    password: String
+) {
+    loginService.loginWithCredentials(
+        username = username,
+        password = password,
+        onResultReceived = { result ->
+            loginResultReceived(result)
         }
-    });
+    )
+}
 ```
 
-We can show a small popup (called a `Toast`). Use `Toast.makeText` to create one. It takes three parameters:
-- A [Context](https://developer.android.com/reference/android/content/Context) - an abstract reference to the Android system. All activities (like our `LoginActivity`) are `Context`s.
-- The `String` you want to display in the popup.
-- How long to display the popup. There are two constants we can use - `Toast.LENGTH_SHORT` and `Toast.LENGTH_LONG`
+> `loginResultReceived` does not exist yet, but it is useful to have it here now to see the flow. 
 
-When your `Toast` is built, you need to call `show()` for it to be displayed:
-```java
-    signIn.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Toast toast = Toast.makeText(LoginActivity.this, "Sign In Clicked", Toast.LENGTH_LONG);
-            toast.show();
-        }
-    });
+`LoginService` has a function `loginWithCredentials` that takes `username`, `password`, and a `onResultReceived` callback function to be executed with result once the result is received from the server.
+
+We have both username and password, let’s now create the callback function we want executed once the result is back. Add following under the last function:
+
+```kotlin
+private fun loginResultReceived(result: LoginResult) {
+    if (result is LoginResult.Success) {
+        state.value = currentState.copy(accountInfo = result.accountInfo)
+    } else {
+        state.value = currentState.copy(
+            enableSignIn = true,
+            handlingSignIn = false
+        )
+    }
+}
 ```
 
-<img src="login-code-toast.gif" width="350">
+Here we are saying that if the login result is success, we want to extract `accountInfo` from the result. Otherwise, we want to re-enable sign in button and hide the loading indicator so user can try logging in again.
 
-## Initial Code Complete!
-Next, we'll look into adding some networking behind our Sign In button.
+We also want to make sure the sign in button is enabled (default is disabled) once password and username is entered, and disabled if any of those two field is empty.
 
-Here's the full code for the `LoginActivity.java` so far:
-```java
-package com.summit.summitproject;
+We can do so by adding this check to run very time those two fields are updated:
 
-import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.Toast;
+```kotlin
+fun enterUsername(username: String) {
+    state.value = currentState.copy(username = username)
+    shouldEnableSignInButton()
+}
 
-import androidx.appcompat.app.AppCompatActivity;
+fun enterPassword(password: String) {
+    state.value = currentState.copy(password = password)
+    shouldEnableSignInButton()
+}
 
-import com.summit.summitproject.prebuilt.login.LoginManager;
+private fun shouldEnableSignInButton() {
+    val usernameFilled = currentState.username.isNotEmpty()
+    val passwordFilled = currentState.password.isNotEmpty()
+    val enableSignIn = (usernameFilled && passwordFilled)
 
-public class LoginActivity extends AppCompatActivity {
-    private EditText username;
-    private EditText password;
-    private Button signIn;
-    private ProgressBar progress;
+    state.value = currentState.copy(enableSignIn = enableSignIn)
+}
+```
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+Now that we have proper state manipulating code in place, let’s use these in our fragment.
 
-        username = findViewById(R.id.username);
-        password = findViewById(R.id.password);
-        signIn = findViewById(R.id.sign_in);
-        progress = findViewById(R.id.progressBar);
+Add the new sign in function to our button:
+```kotlin
+Button(
+    onClick = {
+        viewModel.signIn() // <-- New!
+    },
+    modifier = Modifier
+        .padding(horizontal = 32.dp)
+        .fillMaxWidth()
+) {
+    Text(
+        text = "Sign In",
+        style = MaterialTheme.typography.button
+    )
+}
+```
 
-        signIn.setEnabled(false);
+We also want to disable and show loading indicator while signing in, so modify our fragment code like so:
 
-        username.addTextChangedListener(textWatcher);
-        password.addTextChangedListener(textWatcher);
+Add two new observable values at the beginning of `setContent` along with username/password.
 
-        signIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast toast = Toast.makeText(LoginActivity.this, "Sign In Clicked", Toast.LENGTH_LONG);
-                toast.show();
+```kotlin
+val enabledSignIn: Boolean = viewModel.state.value.enableSignIn
+val handlingSignIn: Boolean = viewModel.state.value.handlingSignIn
+```
+
+And modify the sign in button to change it’s behavior depending on these values:
+
+```kotlin
+if (handlingSignIn) {
+    CircularProgressIndicator(color = MaterialTheme.colors.primary)
+} else {
+    Button(
+        onClick = {
+            viewModel.signIn()
+        },
+        enabled = enabledSignIn,
+        modifier = Modifier
+            .padding(horizontal = 32.dp)
+            .fillMaxWidth()
+    ) {
+        Text(
+            text = "Sign In",
+            style = MaterialTheme.typography.button
+        )
+    }
+}
+```
+
+Here we are replacing our button with one of the compose’s default loading indicator if we are currently in the middle of sign in. We also added `enabled = enabledSignIn` to handle enabling and disabling of the button.
+
+Run the app and see the change!
+
+![](assets/Kapture%202021-05-09%20at%2010.20.07.gif)<!-- {"width":407} -->
+
+Everything is working! Notice how the loading indicator does not go away. But that’s okay! This is because our sign in succeeded and we didn’t put in any logic to take away the indicator for that case. Why? Because we would be transferred to the details screen anyways!
+
+To double check sign in has succeeded, you can open the Logcat to see the logs from our loginService:
+![](assets/Kapture%202021-05-09%20at%2010.23.52.gif)
+
+At this point your `Fragment` code should look like this:
+
+```kotlin
+imports...
+
+class LoginFragment : Fragment() {
+
+    /**
+     * Get a a property delegate to access [LoginViewModel] by default scoped to this Fragment.
+     */
+    private val viewModel: LoginViewModel by viewModels()
+
+    /**
+     * Create a [View] that can host Jetpack Compose UI content.
+     * Use setContent to supply the content composable function for the view.
+     */
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = ComposeView(requireContext()).apply {
+
+        /**
+         * Set the Jetpack Compose UI content for this view.
+         */
+        setContent {
+            val usernameTextFieldValue: String = viewModel.state.value.username
+            val passwordTextFieldValue: String = viewModel.state.value.password
+            val enabledSignIn: Boolean = viewModel.state.value.enableSignIn
+            val handlingSignIn: Boolean = viewModel.state.value.handlingSignIn
+
+            /**
+             * A layout composable that places its children in a vertical sequence.
+             */
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Summit Bank",
+                    style = MaterialTheme.typography.h4,
+                    fontWeight = FontWeight.Black,
+                    modifier = Modifier.padding(vertical = 32.dp),
+                )
+
+
+                LoginTextField(
+                    label = "Username",
+                    textFieldValue = usernameTextFieldValue,
+                    onTextFieldValueChange = { newUsername ->
+                        viewModel.enterUsername(newUsername)
+                    },
+                    maskTextInput = false,
+                    modifier = Modifier
+                        .padding(
+                            horizontal = 32.dp,
+                            vertical = 32.dp
+                        )
+                        .fillMaxWidth()
+                )
+
+                LoginTextField(
+                    label = "Password",
+                    textFieldValue = passwordTextFieldValue,
+                    onTextFieldValueChange = { newPassword ->
+                        viewModel.enterPassword(newPassword)
+                    },
+                    maskTextInput = true,
+                    modifier = Modifier
+                        .padding(horizontal = 32.dp)
+                        .fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.fillMaxHeight(0.8f))
+
+                if (handlingSignIn) {
+                    CircularProgressIndicator(color = MaterialTheme.colors.primary)
+                } else {
+                    Button(
+                        onClick = {
+                            viewModel.signIn()
+                        },
+                        enabled = enabledSignIn,
+                        modifier = Modifier
+                            .padding(horizontal = 32.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Sign In",
+                            style = MaterialTheme.typography.button
+                        )
+                    }
+                }
             }
-        });
-    }
-
-    private TextWatcher textWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            String inputtedUsername = username.getText().toString();
-            String inputtedPassword = password.getText().toString();
-            boolean enableButton = inputtedUsername.length() > 0 && inputtedPassword.length() > 0;
-
-            signIn.setEnabled(enableButton);
         }
-    };
-
+    }
 }
 ```
 
-[Back to Index](../README.md)
+And your `ViewModel`:
+
+```kotlin
+imports...
+
+/**
+ * [ViewModel] for the [LoginFragment]
+ * This is where the business logic of the Login Fragment, and its screens live.
+ */
+class LoginViewModel: ViewModel() {
+    /**
+     * Initialize [LoginService] that provides methods to initiate a login call and listen for its result.
+     */
+    private val loginService: LoginService = LoginServiceImpl()
+
+    /**
+     * Represents the current [LoginState] of our UI. We launch the screen with this initial state.
+     * Observed in [LoginFragment] to update composable UIs accordingly.
+     */
+    val state = mutableStateOf(LoginState())
+
+    /**
+     * Grabs the current snapshot of the [LoginState].
+     */
+    private val currentState get() = state.value
+
+    fun enterUsername(username: String) {
+        state.value = currentState.copy(username = username)
+        shouldEnableSignInButton()
+    }
+
+    fun enterPassword(password: String) {
+        state.value = currentState.copy(password = password)
+        shouldEnableSignInButton()
+    }
+
+    private fun shouldEnableSignInButton() {
+        val usernameFilled = currentState.username.isNotEmpty()
+        val passwordFilled = currentState.password.isNotEmpty()
+        val enableSignIn = (usernameFilled && passwordFilled)
+
+        state.value = currentState.copy(enableSignIn = enableSignIn)
+    }
+
+    fun signIn() {
+        performSignIn(
+            username = currentState.username,
+            password = currentState.password
+        )
+
+        state.value = currentState.copy(
+            enableSignIn = false,
+            handlingSignIn = true
+        )
+    }
+
+    private fun performSignIn(
+        username: String,
+        password: String
+    ) {
+        loginService.loginWithCredentials(
+            username = username,
+            password = password,
+            onResultReceived = { result ->
+                loginResultReceived(result)
+            }
+        )
+    }
+
+    private fun loginResultReceived(result: LoginResult) {
+        if (result is LoginResult.Success) {
+            state.value = currentState.copy(accountInfo = result.accountInfo)
+        } else {
+            state.value = currentState.copy(
+                enableSignIn = true,
+                handlingSignIn = false
+            )
+        }
+    }
+}
+
+/**
+ * Represents the state that can be changed by the user in [LoginFragment] UI.
+ * We start with these initial property values.
+ */
+data class LoginState(
+    val username: String = "",
+    val password: String = "",
+    val rememberMe: Boolean = false,
+    val enableSignIn: Boolean = false,
+    val handlingSignIn: Boolean = false,
+    val accountInfo: AccountInfo? = null
+)
+```
