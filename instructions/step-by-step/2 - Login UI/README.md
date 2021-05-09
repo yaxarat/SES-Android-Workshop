@@ -73,7 +73,7 @@ Nobody likes duplicated code, as it increases upkeep cost and redundant developm
 
 First, let's start by taking a look at what we are trying to create:
 
-![](assets/Screenshot_1619815348.png)<!-- {"width":427} -->
+<img src="assets/Screenshot_1619815348.png" width="427" />
 
 We can see that roughly, there are 4 types of UI components we would need to create. Some, we can create just using what comes standard with Jetpack Compose library. Others, we need to create ourselves.
 
@@ -108,7 +108,7 @@ The `setContent` block defines the activity's layout. Instead of defining the la
 
 If you run the app now, you will see something like this:
 
-![](assets/login-ui-summitbank1.png)<!-- {"width":502} -->
+<img src="assets/login-ui-summitbank1.png" width="500" />
 
 The text is correct, but the design in not quite what we want. Let's think what we are missing…
 **Layouts and decorations!**
@@ -167,7 +167,7 @@ We now wrapped the `Text` component inside a `Column` component. We also used mo
 
 Let's run and see what we made!
 
-![](assets/login-ui-title.png)<!-- {"width":399} -->
+<img src="assets/login-ui-title.png" width="500" />
 
 Nice! We are off to a good start. Now let's tackle a bit more complicated text input components.
 ### OutlinedTextField - Username<!-- {"fold":true} -->
@@ -184,7 +184,7 @@ OutlinedTextField(
 
 If you run the app, you will now see this beautiful outlined text field. However, once you try to interact with it, you will soon find out that it lacks all functionality.
 
-![](assets/Kapture%202021-04-30%20at%2013.11.31.gif)<!-- {"width":374} -->
+<img src="assets/Kapture%202021-04-30%20at%2013.11.31.gif" width="500" />
 
 This is because we haven’t passed correct arguments to the `OutlinedTextField`’s parameters. Let’s go over what we need and what they do one by one.
 
@@ -243,7 +243,7 @@ See how we are observing the mutable state in `value = usernameFieldValue.value`
 
 Ah! It’s responding to our input now!
 
-![](assets/Kapture%202021-04-30%20at%2016.05.18.gif)<!-- {"width":368} -->
+<img src="assets/Kapture%202021-04-30%20at%2016.05.18.gif" width="500" />
 
 ### OutlinedTextField - Password<!-- {"fold":true} -->
 Awesome. Now we know how to create a proper textfield. Now let’s do the entire process all over again with the password textfield… er, on the second thought, let’s not do that.
@@ -584,7 +584,7 @@ Button(...) {
 
 Now when you run it, you will the sign in button in more reasonable and ergonomic location.
 
-![](assets/Screenshot_1619883989.jpg)<!-- {"width":369} -->
+<img src="assets/Screenshot_1619883989.jpg" width="500" />
 
 ### Completed Login UI<!-- {"fold":true} -->
 Our login screen’s UI is complete (minus the check box we will get to later)! The completed `LoginFragment` code should look as follows:
