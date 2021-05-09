@@ -9,35 +9,25 @@ IDE settings that I like to use for the workshop.
 You will need to set up your Android development environment and launch the `Start-Here`
 
 1. Install Android Studio Arctic Fox (Canary Build) from [here](https://developer.android.com/studio/preview).
-1. Clone this repository.
-1. In Android development environment, switch to the `Start-Here` branch.
-1. Run the project on a [physical device or emulator](https://developer.android.com/training/basics/firstapp/running-app).
-
-**Note:** Even if you have previously installed Android Studio, make sure to confirm or install Android Studio Arctic Fox. [Jetpack Compose](https://developer.android.com/jetpack/compose), the toolkit we will be using to develop our UI requires the Arctic Fox build of Android Studio.
+2. Clone this repository.
+3. Open the `Start` project folder in Android Studio.
+4. Run the project on a [physical device or emulator](https://developer.android.com/training/basics/firstapp/running-app).
 
 If everything goes right, you should see the following screen when you hit “Run app”!
+![](assets/setup-run.png)<!-- {"width":436} -->
 
-<img src="setup-run.png" width="350">
-<br>
-<br>
-<img src="setup-app.png" width="350">
+![](assets/setup-app.png)<!-- {"width":435} -->
 
 ## IDE Setup (Optional)
-If you want the project structure to reflect the same file layout as they are on disk, switch from `Android` to `Project`.
+If you want the project structure to reflect the same file layout as what I will be using through    out the session, make sure to stay on or switch to `Android` and not `Project`.
 
-<img src="ide-project.png" width="350">
-
-I’d also recommend enabling auto-imports, which will automatically add the `import ...` lines at the top of your code files as you write code.
-
-1. Open the `Preferences` (`Settings` on Windows) -> `Editor -> General -> Auto-Import`
-2. Enable `Add unambiguous imports...` and `Optimize imports...`
-
-<img src="ide-project.png" width="350">
+![](assets/ide-project.png)<!-- {"width":278} -->
 
 I'd also recommend enabling auto-imports, which will automatically add the `import ...`
 lines at the top of your code files as you write code.
-- Open the `Preferences` (`Settings` on Windows) -> `Editor -> General -> Auto-Import`
-  - Enable `Add unambiguous imports...` and `Optimize imports...`
-<img src="ide-preferences.png" width="800">
+1. Open the `Preferences` (`Settings` on Windows) -> `Editor -> General -> Auto-Import`
+2. Enable `Add unambiguous imports...` and `Optimize imports...`
+
+![](assets/ide-preferences.png)<!-- {"width":654} -->
 
 [Back to Index](../README.md)
