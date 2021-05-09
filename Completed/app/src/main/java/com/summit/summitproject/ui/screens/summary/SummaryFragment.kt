@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import com.summit.summitproject.prebuilt.model.Transaction
+import com.summit.summitproject.ui.screens.components.TransactionCard
 
 class SummaryFragment : Fragment() {
 
@@ -77,6 +79,15 @@ class SummaryFragment : Fragment() {
                 )
 
                 Divider()
+
+                repeat(5) {
+                    TransactionCard(
+                        modifier = Modifier
+                            .height(120.dp)
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    )
+                }
             }
         }
     }
