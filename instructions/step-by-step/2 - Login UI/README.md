@@ -535,7 +535,7 @@ LoginTextField(
 
 Run and see it works as intended!
 
-![](assets/Kapture%202021-05-01%20at%2009.52.33.gif)<!-- {"width":390} -->
+<img src="assets/Kapture%202021-05-01%20at%2009.52.33.gif" width="500" />
 
 Perfect.
 
