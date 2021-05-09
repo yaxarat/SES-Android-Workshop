@@ -14,7 +14,7 @@ You will need to set up your Android development environment and launch the `Sta
 4. Run the project on a [physical device or emulator](https://developer.android.com/training/basics/firstapp/running-app).
 
 If everything goes right, you should see the following screen when you hit “Run app”!
-![](assets/setup-run.png|width = 400)
+![](assets/setup-run.png | width = 400)
 
 ![](assets/setup-app.png)<!-- {"width":335} -->
 
