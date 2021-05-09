@@ -16,9 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
+import com.summit.summitproject.R
+import com.summit.summitproject.prebuilt.model.AccountInfo
 import com.summit.summitproject.ui.screens.components.LoginTextField
+import com.summit.summitproject.ui.screens.summary.SummaryFragment
 
 class LoginFragment : Fragment() {
 
@@ -45,6 +50,7 @@ class LoginFragment : Fragment() {
             val passwordTextFieldValue: String = viewModel.state.value.password
             val enabledSignIn: Boolean = viewModel.state.value.enableSignIn
             val handlingSignIn: Boolean = viewModel.state.value.handlingSignIn
+            val accountInfo: AccountInfo? = viewModel.state.value.accountInfo
 
             /**
              * A layout composable that places its children in a vertical sequence.
@@ -59,7 +65,6 @@ class LoginFragment : Fragment() {
                     fontWeight = FontWeight.Black,
                     modifier = Modifier.padding(vertical = 32.dp),
                 )
-
 
                 LoginTextField(
                     label = "Username",
@@ -108,6 +113,34 @@ class LoginFragment : Fragment() {
                         )
                     }
                 }
+            }
+
+            /**
+             * When sign in call succeeds and [AccountInfo] is provided, we transition to the next screen.
+             */
+            if (accountInfo != null) {
+
+                /**
+                 * Sets the given result for the requestKey. This result will be delivered to a [FragmentResultListener]
+                 * that is called with the same requestKey.
+                 */
+                setFragmentResult(
+                    requestKey = "requestKey",
+                    result = bundleOf(
+                        "name" to accountInfo.name,
+                        "cardLastFour" to accountInfo.cardLastFour,
+                        "transactions" to accountInfo.transactions
+                    )
+                )
+
+                /**
+                 * Replace current fragment with the next.
+                 * We use replace here sine we don't want users to be able to back navigate to login screen.
+                 */
+                parentFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.main_container, SummaryFragment())
+                    .commit()
             }
         }
     }
