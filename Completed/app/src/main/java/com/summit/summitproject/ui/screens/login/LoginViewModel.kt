@@ -3,6 +3,7 @@ package com.summit.summitproject.ui.screens.login
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.summit.summitproject.prebuilt.model.AccountInfo
+import com.summit.summitproject.prebuilt.service.LoginResult
 import com.summit.summitproject.prebuilt.service.LoginService
 import com.summit.summitproject.prebuilt.service.LoginServiceImpl
 
@@ -26,6 +27,60 @@ class LoginViewModel: ViewModel() {
      * Grabs the current snapshot of the [LoginState].
      */
     private val currentState get() = state.value
+
+    fun enterUsername(username: String) {
+        state.value = currentState.copy(username = username)
+        shouldEnableSignInButton()
+    }
+
+    fun enterPassword(password: String) {
+        state.value = currentState.copy(password = password)
+        shouldEnableSignInButton()
+    }
+
+    private fun shouldEnableSignInButton() {
+        val usernameFilled = currentState.username.isNotEmpty()
+        val passwordFilled = currentState.password.isNotEmpty()
+        val enableSignIn = (usernameFilled && passwordFilled)
+
+        state.value = currentState.copy(enableSignIn = enableSignIn)
+    }
+
+    fun signIn() {
+        performSignIn(
+            username = currentState.username,
+            password = currentState.password
+        )
+
+        state.value = currentState.copy(
+            enableSignIn = false,
+            handlingSignIn = true
+        )
+    }
+
+    private fun performSignIn(
+        username: String,
+        password: String
+    ) {
+        loginService.loginWithCredentials(
+            username = username,
+            password = password,
+            onResultReceived = { result ->
+                loginResultReceived(result)
+            }
+        )
+    }
+
+    private fun loginResultReceived(result: LoginResult) {
+        if (result is LoginResult.Success) {
+            state.value = currentState.copy(accountInfo = result.accountInfo)
+        } else {
+            state.value = currentState.copy(
+                enableSignIn = true,
+                handlingSignIn = false
+            )
+        }
+    }
 }
 
 /**

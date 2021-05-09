@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.mutableStateOf
@@ -40,8 +41,10 @@ class LoginFragment : Fragment() {
          * Set the Jetpack Compose UI content for this view.
          */
         setContent {
-            val usernameTextFieldValue = remember { mutableStateOf("") }
-            val passwordTextFieldValue = remember { mutableStateOf("") }
+            val usernameTextFieldValue: String = viewModel.state.value.username
+            val passwordTextFieldValue: String = viewModel.state.value.password
+            val enabledSignIn: Boolean = viewModel.state.value.enableSignIn
+            val handlingSignIn: Boolean = viewModel.state.value.handlingSignIn
 
             /**
              * A layout composable that places its children in a vertical sequence.
@@ -60,9 +63,9 @@ class LoginFragment : Fragment() {
 
                 LoginTextField(
                     label = "Username",
-                    textFieldValue = usernameTextFieldValue.value,
+                    textFieldValue = usernameTextFieldValue,
                     onTextFieldValueChange = { newUsername ->
-                        usernameTextFieldValue.value = newUsername
+                        viewModel.enterUsername(newUsername)
                     },
                     maskTextInput = false,
                     modifier = Modifier
@@ -75,9 +78,9 @@ class LoginFragment : Fragment() {
 
                 LoginTextField(
                     label = "Password",
-                    textFieldValue = passwordTextFieldValue.value,
-                    onTextFieldValueChange = { newUsername ->
-                        passwordTextFieldValue.value = newUsername
+                    textFieldValue = passwordTextFieldValue,
+                    onTextFieldValueChange = { newPassword ->
+                        viewModel.enterPassword(newPassword)
                     },
                     maskTextInput = true,
                     modifier = Modifier
@@ -87,18 +90,23 @@ class LoginFragment : Fragment() {
 
                 Spacer(modifier = Modifier.fillMaxHeight(0.8f))
 
-                Button(
-                    onClick = {
-
-                    },
-                    modifier = Modifier
-                        .padding(horizontal = 32.dp)
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Sign In",
-                        style = MaterialTheme.typography.button
-                    )
+                if (handlingSignIn) {
+                    CircularProgressIndicator(color = MaterialTheme.colors.primary)
+                } else {
+                    Button(
+                        onClick = {
+                            viewModel.signIn()
+                        },
+                        enabled = enabledSignIn,
+                        modifier = Modifier
+                            .padding(horizontal = 32.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Sign In",
+                            style = MaterialTheme.typography.button
+                        )
+                    }
                 }
             }
         }
