@@ -1,10 +1,10 @@
+# Login UI
 ## Login Screen UI
+This section covers building the login screen's UI. In Android, UIs were written almost exclusively in XML directly or by using a visual editor. However, the newest and definitely the standard way moving forward is to use Jetpack Compose. Jetpack Compose is a declarative way to write UI codes using Kotlin. Besides being simpler, it has many other advantages you can read about [here](https://developer.android.com/jetpack/compose). Or if you want to dig deeper into the subject, Google also offers [a pathway program](https://developer.android.com/courses/pathways/compose).
+## Composable functions
+Jetpack Compose makes it much easier to design and build your app's UI. Composable functions are the basic building block of Compose. A composable function is a function that takes some input and generates what's shown on the screen. For more information about composables, take a look at the [Compose mental model documentation](https://developer.android.com/jetpack/compose/mental-model).
 
-This section covers building the login screen's UI. In Android, UIs were written alsmot exclusively in XML directly or by using a visual editor. However, the newest and definetly the standard way moving forward is to use Jetpack Compose. Jetpack Compose is a declarative way to write UI codes using Kotlin. Besides being simpler, it has many other advantages you can read about [here](https://developer.android.com/jetpack/compose). Or if you want to dig deeper into the subjet, Google also offers [a pathway program](https://developer.android.com/courses/pathways/compose).
-
-### Composable functions
-
-Jetpack Compose is built around composable functions. These functions let you define your app's UI programmatically by describing its shape and data dependencies. To create a composable function, just add the `@Composable` annotation to the function name, like so:
+To create a composable function, just add the `@Composable` annotation to the function name, like so:
 ```kotlin
 @Composable
 fun LoginEditText() { ... }
@@ -30,7 +30,8 @@ fun ThreeTextAndOneButton() {
 ```
 
 If you were to run the app with above composable as its UI, you'd see something like this:
-<img src="login-ui-column.png" width="400">
+
+![](assets/login-ui-column.png)<!-- {"width":200} -->
 
 Notice how the text and other UI elements are all aligned to the left edge of the screen?
 That is the default behavior, and we can change it using something called `modifier`. 
@@ -38,6 +39,7 @@ That is the default behavior, and we can change it using something called `modif
 `modifier` lets you decorate or add behavior to Compose UI elements. For example, backgrounds, padding and click event listeners decorate or add behavior to rows, text or buttons.
 
 Let's try and add some left padding to the child views inside `Column` using `modifier`:
+
 ```kotlin
 @Composable
 fun ThreeTextAndOneButton() {
@@ -52,36 +54,45 @@ fun ThreeTextAndOneButton() {
     }
 }
 ```
-<img src="login-ui-column-leftpadding.png" width="400">
+
+![](assets/login-ui-column-leftpadding.png)
+
 
 Nice! Now there are some breathing room.
 
-> *What is dp in 12.dp here?* dp is a density-independent Pixels - an abstract unit that is based on the physical density of the screen. These units are relative to a 160 dpi screen, so one dp is one pixel on a 160 dpi screen. The ratio of dp-to-pixel will change with the screen density, but not necessarily in direct proportion. This is the standard measurement unit for UIs in android development to support multiple devices with different screen sizes.
+> What is `dp` in `12.dp` here? 
 
-I hope you are starting to get a hang of how jetpack compose works! This ia a topic that goes deep and wide. So I won't go over every detail here, but as we progress further, we will discover more and more of its awesome features.
+`dp` is a *density-independent pixels* - an abstract unit that is based on the physical density of the screen. These units are relative to a `160 dpi` screen, so one `dp` is one pixel on a `160 dpi` screen. The ratio of dp-to-pixel will change with the screen density, but not necessarily in direct proportion. This is the standard measurement unit for UIs in android development to support multiple devices with different screen sizes.
 
-### Divide and conqure
+Similar concept is also applied to font sizes, where a special unit called *scalable pixels* (`sp`) is used. This is like the `dp` unit, but it is also scaled by the user's font size preference. It is recommended that you use this unit when specifying font sizes, so they will be adjusted for both the screen density and user's preference.
 
+I hope you are starting to get a hang of how jetpack compose works! This  a topic that goes deep and wide. So I won't go over every detail here, but as we progress further, we will discover more and more of its awesome features.
+
+### Divide and conquer
 Nobody likes duplicated code, as it increases upkeep cost and redundant development time. Luckily, compose is all about making UIs more modular and reusable.
 
 First, let's start by taking a look at what we are trying to create:
 
-<img src="login-ui-div.png" width="400">
+![](assets/Screenshot_1619815348.png)<!-- {"width":427} -->
 
 We can see that roughly, there are 4 types of UI components we would need to create. Some, we can create just using what comes standard with Jetpack Compose library. Others, we need to create ourselves.
 
 1. Text component to hold our bank's name
-1. Text input component to accept user name and password
-1. Check box component to let users decide if they want their username rememebred
-1. And finally the sign in button itself
+2. Text input component to accept user name and password
+3. Check box component to let users decide if they want their username remembered
+4. And finally the sign in button itself
 
-Let's start by creating what lloks the easiest, the text component.
+We will table the check box component for now, since it is a part an additional content I want to cover if we have enough time later in this session.
 
-### Text component
+For now, let's start by creating what looks the easiest; the text component.
 
-I don't think you are suprised to find that something as essential as text component comes standard with the library. And to use it, all we need to do is this:
+### Text component<!-- {"fold":true} -->
+![](assets/Screen%20Shot%202021-04-30%20at%2011.55.21%20AM.png)
+
+I don't think you are surprised to find that something as essential as text component comes standard with the compose library. And to use it, all we need to do is this:
 
 * Go to `LoginFragment.kt`, and inside `setContent {...}` block, add the following:
+
 ```kotlin
 /**
 *  setContent set the Jetpack Compose UI content for this view.
@@ -92,18 +103,32 @@ setContent {
     )
 }
 ```
-The `setContent` block defines the activity's layout. Instead of defining the layout contents with the traditional XML file, we call composable functions. Jetpack Compose library then transform these composable functions into the app's UI elements. Thus overcomming the chicken or the egg problem with composable functions needing to be called within another composable function.
 
+The `setContent` block defines the activity's layout. Instead of defining the layout contents with the traditional `XML` file, we call composable functions. Jetpack Compose library then transform these composable functions into the app's UI elements. Thus overcoming the chicken or the egg problem with composable functions needing to be called within another composable function.
 
 If you run the app now, you will see something like this:
 
+![](assets/login-ui-summitbank1.png)<!-- {"width":502} -->
 
-<img src="login-ui-summitbank1.png" width="400">
+The text is correct, but the design in not quite what we want. Let's think what we are missing…
+**Layouts and decorations!**
+### Layout<!-- {"fold":true} -->
+There are three basic layouts in compose:
+* Column: to place items vertically on the screen.
+* Row: to place items horizontally on the screen.
+* Box:  to put one element on top of another.
 
+![](assets/layout-column-row-box.png)
 
-Text is correct, but the design in not quite, what we want.
+### Modifiers<!-- {"fold":true} -->
+Modifiers allow you to decorate or augment a composable. Modifiers let you do these sorts of things:
 
-Let's think what we are missing. First of all, we want all of our components to be inside a `Column` since they need to be stacked vertically. Also, we would want to use modifiers to decorate the components.
+* Change the composable's size, layout, behavior, and appearance
+* Add information, like accessibility labels
+* Process user input
+* Add high-level interactions, like making an element clickable, scrollable, draggable, or zoomable
+
+With this knowledge in mind, let’s get started with updating our UI. We want all of our components to be inside a `Column` since they need to be stacked vertically. Also, we would want to use modifiers to decorate the components.
 
 Now with that in mind, let's try something like this:
 ```kotlin
@@ -128,287 +153,498 @@ setContent {
 }
 ```
 
-We now wrapped the `Text` component inside a `Column` colmponent. We also used modifier and other component parameters to decorate them. Here is what each of them do:
+We now wrapped the `Text` component inside a `Column` component. We also used modifier and other component parameters to decorate them. Here is what each of them do:
 
 **Column**
-* `horizontalAlignment` parameter to defin child component alignment. Since we want our views to be centered, we chose `Alignment.CenterHorizontally`.
+* `horizontalAlignment` parameter to define child component alignment. Since we want our views to be centered, we chose `Alignment.CenterHorizontally`.
 * `Modifier.fillMaxWidth()` a modifier that tells column to take up the entire width of the screen.
 
 **Text**
 * `text` text value we want to show.
 * `style` parameter that decides what type of text style we want to use. You can see all the options [here](https://material.io/design/typography/the-type-system.html#type-scale)
 * `fontWeight` the weight we want our font to have. We want a very bold look, so we went with `Black` here.
-* `Modifier.padding(vertical = 32.dp)` we add 32.dp of padding to both top and bottom of our Text component so others views we add later won't be touching.
+* `Modifier.padding(vertical = 32.dp)` we add `32.dp` of padding to both top and bottom of our Text component so others views we add later won't be touching.
 
 Let's run and see what we made!
 
-
-<img src="login-ui-title.png" width="400">
+![](assets/login-ui-title.png)<!-- {"width":399} -->
 
 Nice! We are off to a good start. Now let's tackle a bit more complicated text input components.
-
-### OutlinedTextField
-
-Lucky us! This component is also pre-built withint the library. We can add it to our view by appending it to the end of Text component like so:
-
-Our login screen's UI will go into `app/src/main/res/layout/activity_login.xml` (the file has already been created). In general, all **res**ources
-for an Android app goes under `app/src/main/res/`, this includes XML layout files, but also things like images, colors, and sound files.
-
-<img src="login-initial.png" width="800">
-
-If they are not showing, you can enable the previews for the bottom bar and the top app bar by clicking the eye icon and enabling `Layout Decorations`.
-- **In newer versions of Android Studio**, this option has been renamed to `Show System UI`.
-
-<img src="login-layout-decorations.png" width="400">
-
-
-
-### Learning ConstriantLayout
-We're going to use a [ConstraintLayout](https://developer.android.com/training/constraint-layout) to design our login screen.
-A `ConstraintLayout` works by defining relationships (constraints) between items on the screen (in
-this case, a title label, two input text fields, a button, and a loading spinner). There are other layouts which exist,
-like the [LinearLayout](https://developer.android.com/guide/topics/ui/layout/linear) which simply places components in a list either horizontally or vertically (and you can nest `LinearLayout`s
-inside of each other to create more complex UIs). The `ConstraintLayout` requires a little bit of a learning curve,
-but can be used to create more-complex UIs with ease if used correctly.
-
-As shown in the `Component Tree` panel, our UI _already_ has a `ConstraintLayout` which contains the
-single, centered text label (called a `TextView`).
-
-Let's see this in action by first **deleting** the existing `TextView`, by selecting it and hitting Delete / Backspace.
-
-Then, we'll place our own `TextView` by dragging one off the palette and dropping it in the canvas.
-
-<img src="login-create-textview.gif" width="800">
-
-Select the new `TextView`. When using a `ConstraintLayout`, any of its child `View`s will get four draggable handles (anchors)
-used to constrain each of the four sides.
-
-Each `View` in a `ConstraintLayout` is **required** to have at least 1 horizontal and 1 vertical constraint,
-otherwise, it will default to snapping to the top-left corner, which you can see by running the app, since we have not set any constraints.
-
-(the Layout Editor may not show it snapped to the top-left corner, but this is just for convenience during UI design)
-
-<img src="login-no-constraints.png" width="200">
-
-You can click-and-drag the anchors to align it to the sides of the screen, or even to other `View`s once we
-have more than one. We can see this by playing in the layout editor.
-
-<img src="login-constraints.gif" width="400">
-
-If you set **opposing constraints** (e.g. left and right, or top and bottom), the `View` will center itself between the two.
-
-<img src="login-constraints-centering.gif" width="400">
-
-We would like this `TextView` to be centered at the top of our screen, to become a title later, so we only
-need to set the **top**, **left**, and **right** constraint.
-
-The bottom constraint is not needed: to delete a constraint, Cmd+Click (or Ctrl+Click) on the anchor. Deletion is also an option if
-you right-click on the anchor.
-
-<img src="login-delete-constraint.gif" width="400">
-
-### Setting Attributes
-
-With our `TextView` in the right position, we can set some of its attributes in the right panel:
-- Set the `id` to `title`
-- Use the `Constraint Widget` to set a top margin of `8`
-- Set the `text` to `Welcome to Summit!`
-- Set the `textSize` to `18sp`
-- Click the bold `B` under `textStyle`
-
-<img src="login-title-attributes.gif" width="600">
-
-<img src="login-title-attributes2.gif" width="600">
-
-The `id` is like a "variable name" for the UI element. It has no visual impact, but will be needed later to reference this `View` from code.
-
-Units-of-measurement in Android are not necessarily pixels. Smartphones come in different sizes and _pixel densities_ (how many pixels
-comprise the screen). e.g. two Android phones may have the same screen size (say, in inches), but have different pixel densities. So, it's important
-to not use pixels for measurement, as your UI would end up looking differently on different screens.
-
-Android provides two primary units-of-measurement that address this concern:
-  - _Density-independent pixels_ (dp). Android will figure out how much to scale this value by depending on the screen size (so it looks the same on all devices).  e.g. This might be 8 _pixels_ on a smaller screen vs. 16 _pixels_ on a larger screen.
-    - For example, our title's top margin is set using dp.
-  - _Scalable pixels_ (sp). This is similar to the (dp), except it also considers the user's system-wide font size (e.g. a user may prefer larger text).
-    - For example, our title's text size is set using sp.
-
-[Official Docs - Support Different Screen Sizes](https://developer.android.com/training/multiscreen/screendensities)
-
-### Placing the Username Field
-In the palette, go to the `Text` section and drag-and-drop a `Plain Text` component onto the canvas. This
-is an `EditText` view and is a text field that the user can type into.
-
-We want it to be centered, but _below_ our title view. The left & right constraints will be set to the sides
-of the device. The top constraint will be linked to the **bottom** anchor of the title view.
-
-<img src="login-username-initial.gif" width="600">
-
-<img src="login-username-constraints.gif" width="600">
-
-For attributes:
-- Set the `id` to `username`
-- Use the `Constraint Widget` to set a top margin of `16` and left & right margins of `8`
-- Set the `text` to `Username`
-
-<img src="login-username-attributes.gif" width="600">
-
-Run the app. Notice how the user has to delete the word "Username" in order to type their name, which is inconvenient.
-
-<img src="login-username-inconvenient.gif" width="350">
-
-Instead of setting the `text` attribute, set the `hint` attribute, which sets the text on the background
-of the `EditText`, until the user types anything.
-
-<img src="login-username-hint.png" width="350">
-
-<img src="login-username-hint.gif" width="350">
-
-### Placing the Password Field
-In the palette, drag a `Password` component under the `Text` section.
-
-Constrain it under the username field, similar to how the username was done, except constrain the top
-side to the bottom anchor of the username field.
-
-For attributes:
-- Set the `id` to `password`
-- Use the `Constraint Widget` to set top, left, and right sides to `8`
-- Set the `hint` to `Password`
-
-### Viewing the XML Representation
-For everything we've been doing in the Layout Editor, XML code is generated underneath.
-
-You can view it by clicking the Code button above the Attributes panel. You can also click the Design
-button in this area to go back.
-
-<img src="login-xml-button.png" width="350">
-
-We can see that the XML representation is roughly understandable, based on what we did in the
-Layout Editor. It's possible to design your layout fully by writing this XML code directly and this is
-up to personal preference. I generally use both the Layout Editor and XML directly -- for example,
-some UI attributes are easier to just type out in XML rather than finding them in the Attributes panel.
-
-<img src="login-xml-example.png" width="800">
-
-Some of the lines are highlighted yellow as warnings, we'll address these in a later section.
-
-Make sure you click the Design button to go back to the Layout Editor.
-
-<img src="login-xml-button2.png" width="350">
-
-### Placing the Sign In Button
-We'll place a `Button` component next (under `Buttons` in the palette). We'll set the
-constraints similar to how we did the last two (but below the password field).
-
-For attributes:
-- Set the `id` to `sign_in`
-- Use the `Constraint Widget` to set top to `8` and the left & right sides to `16`
-- Set the `text` to `Sign In`
-
-To get the width of the bottom to expand to fill the available space, choose `0dp (match_constraint)` for the `layout_width`.
-The button will expand to fill the available space, minus the margins.
-
-<img src="login-button-0dp.png" width="350">
-
-### Placing the Progress Bar
-Finally, we'll place a `ProgressBar` (under `Widgets` in the palette) and constrain it below the button.
-
-For attributes:
-- We can leave the `id` alone, the default `progressBar` is adequate
-- Use the `Constraint Widget` to set top to `8`
-
-We want the progress bar to be initially invisible, to do this set the `visibility` attribute to `invisible`
-
-There's also `gone` as an option. The difference between `invisible` and `gone` is whether or not the view's
-bounding box will still be kept. This might be relevant if other items are being constrained to your `ProgressBar`
-and you do (or don't) want them to be shifted accordingly.
-
-<img src="login-progressbar-visibility.gif" width="600">
-
-### Initial UI Complete!
-This completes our initial UI for the login screen!
-
-There are a few improvements we'll come back and add later -- adding a "Remember Me"
-switch and addressing some of the XML warnings.
-
-<img src="login-initial-final.png" width="350">
-
-Here's the final XML code for this screen. If you've fallen behind or missed something, you
-can copy paste this into the Code section of the `activity_login.xml` screeen.
-
-<img src="login-xml-button.png" width="350">
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Welcome to Summit!"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:ems="10"
-        android:hint="Username"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title" />
-
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:ems="10"
-        android:hint="Password"
-        android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username" />
-
-    <Button
-        android:id="@+id/sign_in"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:text="Sign In"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sign_in" />
-    
-</androidx.constraintlayout.widget.ConstraintLayout>
+### OutlinedTextField - Username<!-- {"fold":true} -->
+Lucky us! This component is also pre-built within the library. Let’s try adding it to our view by appending it to the end of Text component like so:
+```kotlin
+OutlinedTextField(
+    value = "",
+    onValueChange = { },
+    label = {
+        Text(text = "Username")
+    }
+)
 ```
 
-[Back to Index](../README.md)
+If you run the app, you will now see this beautiful outlined text field. However, once you try to interact with it, you will soon find out that it lacks all functionality.
+
+![](assets/Kapture%202021-04-30%20at%2013.11.31.gif)<!-- {"width":374} -->
+
+This is because we haven’t passed correct arguments to the `OutlinedTextField`’s parameters. Let’s go over what we need and what they do one by one.
+
+>Quick reminder:
+>You can always dig deeper and read the source code of a certain class, interface, value and so on by `cmd` + click for Mac or `ctrl` + click for windows on the specific thing you want to get the details about.
+>
+>![](assets/Kapture%202021-04-30%20at%2014.53.47.gif)
+
+For us, we are interested in following parameters the `OutlinedTextField` provides:
+* `value` the current value of the text field.
+* `onValueChanged` the callback that is triggered when the input service updates the text. An updated text comes as a parameter of the callback.
+* `label` label to be displayed inside the text field container.
+* `singleLine` when set to true, this text field becomes a single horizontally scrolling text field instead of wrapping onto multiple lines.
+* `modifier` a Modifier object we covered earlier
+
+Notice how the current state of the text field value is being exposed in `value` but being updated in `onValueChanged`. This requires us to have some variable in-between to hold the text field state so it can be exposed to any view that wants to display its value,  and update its value for changes in that state.
+
+### State in Compose<!-- {"fold":true} -->
+The concept of state is at the core of Compose. The reason we saw the text field not update upon key entries was because the `OutlinedTextField` doesn't update itself—it updates when its `value` parameter changes. This is due to how composition and recomposition (UI updates) work in Compose.
+
+>**Key Term:** Composition: a description of the UI built by Jetpack Compose when it executes composables.
+>
+>**Initial composition:** creation of a Composition by running composables the first time.
+**Recomposition:** re-running composables to update the Composition when data changes.
+
+### Remember the MutableState<!-- {"fold":true} -->
+To update our  `OutlinedTextField` , we need to pass in a value that represents the state of the TextField and add code to update the state when the value of the TextField changes.
+
+To introduce a local state that holds the name that should be displayed, use `remember { mutableStateOf() }`, passing in the default value for the text. That way, whenever the name state changes, the value displayed by TextField will change too.
+
+Composable functions can store a single object in memory by using the `remember` composable. A value computed by remember is stored in the composition during initial composition, and that stored value is returned during recomposition. You can use `remember` to store both mutable and immutable objects.
+
+`mutableStateOf` creates a `MutableState`, which is an `observable` type in Compose. Any changes to its value will schedule recomposition of any composable functions that read that value.
+
+`remember` helps you preserve the state across recompositions. If you use `mutableStateOf` without also using remember, then the state is reinitialized to an empty string every time the `OutlinedTextField` is recomposed.
+
+Let’s try creating a remembered mutable state that our username filed can observe and update:
+
+```kotlin
+val usernameFieldValue = remember { mutableStateOf("") }
+
+OutlinedTextField(
+    value = usernameFieldValue.value,
+    onValueChange = { newUsernameString ->
+        usernameFieldValue.value = newUsernameString
+    },
+    label = {
+        Text(text = "Username")
+    },
+    modifier = Modifier,
+    singleLine = true,
+)
+```
+
+See how we are observing the mutable state in `value = usernameFieldValue.value` and updating the same value when `onValueChange` callback is called with the new string state `onValueChange = { newUsernameString -> usernameFieldValue.value = newUsernameString }`
+
+Ah! It’s responding to our input now!
+
+![](assets/Kapture%202021-04-30%20at%2016.05.18.gif)<!-- {"width":368} -->
+
+### OutlinedTextField - Password<!-- {"fold":true} -->
+Awesome. Now we know how to create a proper textfield. Now let’s do the entire process all over again with the password textfield… er, on the second thought, let’s not do that.
+
+Repeating same code is not a good practice ([DRY principle](https://dzone.com/articles/software-design-principles-dry-and-kiss)). It is fine here since there are only two text fields, but imagine creating an app that might require 10, 20 or even more. It’s just not scalable, and creates unnecessary point of entry for bugs.
+
+This is were custom composable functions come into play. First, go ahead and create a folder named “components” inside our existing “screens” folder.
+
+![](assets/Screen%20Shot%202021-04-30%20at%204.15.28%20PM.png)
+
+In there, create a new kotlin file named `LoginTextField` like so:
+
+![](assets/Kapture%202021-04-30%20at%2016.25.19.gif)
+
+In that new file, create a new composable function and copy-paste the username textfield we created earlier:
+
+```kotlin
+@Composable // An anotation that denotes this is a composable function
+fun LoginTextField() {
+    val usernameFieldValue = remember { mutableStateOf("") }
+
+    OutlinedTextField(
+        value = usernameFieldValue.value,
+        onValueChange = { newUsernameString ->
+            usernameFieldValue.value = newUsernameString
+        },
+        label = {
+            Text(text = "Username")
+        },
+        modifier = Modifier,
+        singleLine = true,
+    )
+}
+```
+
+We can now simply call this from our `LoginFragment` like this:
+
+```kotlin
+setContent {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(...)
+
+        LoginTextField() // A one liner!
+    }
+}
+```
+
+Run the app again and confirm that everything still works.
+
+### State hoisting<!-- {"fold":true} -->
+Before we try and generalize our `LoginTextField` to accommodate both username and password field, we need to learn about the concept of state hoisting.
+
+When a composable holds its own state like in our `LoginTextField`, it makes the composable hard to reuse and test, and it also keeps the composable tightly coupled to how its state is stored. Instead, you should make this a stateless composable—a composable that doesn't hold any state.
+
+```kotlin
+@Composable
+fun LoginTextField() {
+    val usernameFieldValue = remember { mutableStateOf("") } // <- State
+
+    OutlinedTextField(
+        value = usernameFieldValue.value,
+        onValueChange = { newUsernameString ->
+            usernameFieldValue.value = newUsernameString
+        },
+        label = {
+            Text(text = "Username") // <- State
+        },
+        modifier = Modifier, // <- State
+        singleLine = true, // <- State
+    )
+}
+```
+
+To do this, you can use state hoisting. State hoisting is a programming pattern where you move the state of a composable to the caller of that composable. A simple way to do this is by replacing the state with a parameter and using lambdas to represent events.
+
+When applied to composables, this often means introducing two parameters to the composable:
+* `value`: T: the current value to display.
+* `onValueChange: (T) -> Unit`: an event that requests the value to change where T is the proposed new value.
+
+So, to make our `LoginTextField` a state less composable, we need to refactor it to something like below:
+
+```kotlin
+@Composable
+fun LoginTextField(
+    label: String, // <- Hoisted State
+    textFieldValue: String, // <- Hoisted State
+    onTextFieldValueChange: (String) -> Unit, // <- Event lambda
+    modifier: Modifier = Modifier // <- Hoisted State
+) {
+    OutlinedTextField(
+        value = textFieldValue,
+        onValueChange = { newUsernameString ->
+            onTextFieldValueChange(newUsernameString)
+        },
+        label = {
+            Text(text = label)
+        },
+        modifier = modifier,
+        singleLine = true, // <- State
+    )
+}
+```
+
+By hoisting the state out of `LoginTextField`, it's easier to reason about the composable, reuse it in different situations, and test. It is decoupled from how its state is stored. Now when we want to modify `LoginFragment`, we don't have to change how `LoginTextField` is implemented. 
+
+You also notice the `lambda` `onTextFieldValueChange` that it can call when it wants to request the state change.
+
+`Lambdas` are the most common way to describe events on a composable. In this example, you define an event called `onTextFieldValueChange` using a `lambda` that takes a `String`, using Kotlin's function type syntax: `(String) -> Unit`. 
+
+The lambda is called `onTextFieldValueChange`—present tense, as **the event doesn't mean the state has already changed**, but rather that the **composable is requesting that the event handler change it**.
+
+Now all we need to do is to pass in the appropriate arguments:
+
+```kotlin
+// In LoginFragment.kt
+setContent {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(...)
+
+        val textFieldValue = remember { mutableStateOf("") }
+
+        LoginTextField(
+            label = "Username",
+            textFieldValue = textFieldValue.value,
+            onTextFieldValueChange = { newUsername ->
+                textFieldValue.value = newUsername
+            },
+            modifier = Modifier
+        )
+    }
+}
+```
+
+You will soon see this in action when we create password text field.
+
+### Unidirectional Data Flow<!-- {"fold":true} -->
+
+![](assets/PNG%20image-29EA23CDEFB7-1.png)<!-- {"width":444} -->
+
+The pattern where the state goes down, and events go up is called a unidirectional data flow. In this case, the state goes down from `LoginFragment` to `LoginTextField` and events go up from `LoginTextField` to `LoginFragment`. By following unidirectional data flow, you can decouple composables that display state in the UI from the parts of your app that store and change state.
+
+### Create Password Text Field<!-- {"fold":true} -->
+Now we know roughly how the state of a composable function should be handled, let’s apply what we learned by giving the ability to `LoginTextField` to be used both as username field and password field.
+
+Let’s start by taking a look at how we create username field now that most of our states are being passed in by `LoginFragment`.
+
+```kotlin
+val textFieldValue = remember { mutableStateOf("") }
+
+LoginTextField(
+    label = "Username",
+    textFieldValue = textFieldValue.value,
+    onTextFieldValueChange = { newUsername ->
+     textFieldValue.value = newUsername
+    },
+    modifier = Modifier
+)
+```
+
+Wow, looks like we have almost everything we need exposed! All we need to do is create another `LoginTextField` below the current one with states that makes sense for password field:
+
+```kotlin
+Column(
+    horizontalAlignment = Alignment.CenterHorizontally,
+    modifier = Modifier.fillMaxWidth()
+) {
+    ...
+
+    val usernameTextFieldValue = remember { mutableStateOf("") }
+
+    LoginTextField(
+        label = "Username",
+        textFieldValue = usernameTextFieldValue.value,
+        onTextFieldValueChange = { newUsername ->
+            usernameTextFieldValue.value = newUsername
+        },
+        modifier = Modifier
+    )
+
+    val passwordTextFieldValue = remember { mutableStateOf("") }
+
+    LoginTextField(
+        label = "Password",
+        textFieldValue = passwordTextFieldValue.value,
+        onTextFieldValueChange = { newPassword ->
+            passwordTextFieldValue.value = newPassword
+        },
+        modifier = Modifier
+    )
+}
+```
+
+Let’s run the app and see what we got.
+
+![](assets/Kapture%202021-05-01%20at%2009.35.11.gif)
+
+Looks almost perfect. There are two issue though.
+1. Spacing between text fields are too close.
+2. Password entries should be masked.
+
+First problem is easy to fix. Since we expose the modifier, we can pass in desired modifier to decorate the composable the way we want. Let’s add following modifiers to our textfields:
+
+```kotlin
+LoginTextField(
+    label = "Username",
+    ...
+    modifier = Modifier
+        .padding(
+            horizontal = 32.dp,
+            vertical = 32.dp
+        )
+        .fillMaxWidth()
+)
+
+LoginTextField(
+    label = "Password",
+    ...
+    modifier = Modifier
+        .padding(horizontal = 32.dp)
+        .fillMaxWidth()
+)
+```
+
+It now looks a lot better!
+
+![](assets/Screen%20Shot%202021-05-01%20at%209.39.26%20AM.png)
+
+Now to the second problem. How do we mask text for one text field but not other, while having them share a single composable function?
+
+Well, we can make masking of texts a state, and pass in appropriate one for each variant!
+Add this new parameter to the `LogintextFieldComponent` and also change the textfield behavior by passing in a new `visualTransformation` argument:
+
+```kotlin
+@Composable
+fun LoginTextField(
+    label: String,
+    textFieldValue: String,
+    onTextFieldValueChange: (String) -> Unit,
+    maskTextInput: Boolean, // <- new!
+    modifier: Modifier = Modifier
+) {
+    OutlinedTextField(
+        value = textFieldValue,
+        onValueChange = { newUsernameString ->
+            onTextFieldValueChange(newUsernameString)
+        },
+        label = {
+            Text(text = label)
+        },
+        visualTransformation = if (maskTextInput) PasswordVisualTransformation() else VisualTransformation.None, // <- new!
+        singleLine = true,
+        modifier = modifier,
+    )
+}
+```
+
+> `visualTransformation` transforms the visual representation of the input value For example, you can use `PasswordVisualTransformation` to create a password text field that hides inputted values.
+
+And in `LoginFragment` we can pass in the correct boolean value to either hide or show the field input:
+
+```kotlin
+LoginTextField(
+    label = "Username",
+    ...
+    maskTextInput = false, // <- show
+    modifier = Modifier
+        .padding(
+            horizontal = 32.dp,
+            vertical = 32.dp
+        )
+        .fillMaxWidth()
+)
+
+LoginTextField(
+    label = "Password",
+    ...
+    maskTextInput = true, // <- hide
+    modifier = Modifier
+        .padding(horizontal = 32.dp)
+        .fillMaxWidth()
+)
+```
+
+Run and see it works as intended!
+
+![](assets/Kapture%202021-05-01%20at%2009.52.33.gif)<!-- {"width":390} -->
+
+Perfect.
+
+### Create Sign In Button<!-- {"fold":true} -->
+Buttons, as you may have already guessed, is also a built in composable. With everything we learned so far, applying it like this to the end of our `column` should come with no surprise:
+
+```kotlin
+Button(
+    onClick = {
+        // TODO: add sign in functionality
+    },
+    modifier = Modifier
+        .padding(horizontal = 32.dp)
+        .fillMaxWidth()
+) {
+    Text(
+        text = "Sign In",
+        style = MaterialTheme.typography.button
+    )
+}
+```
+
+Notice how button requires children composable within it, in this case `Text`, just like how `Column` accepts children composable to stack vertically. This `Text` is then used to create the label for the button.
+
+Here we provided `Text` styled with a `button` typography to match our design. You can learn more about material type system by visiting [google’s material design website](https://material.io/design/typography/the-type-system.html#type-scale).
+
+Run the app and see how it looks now.
+
+![](assets/Screen%20Shot%202021-05-01%20at%2010.18.22%20AM.png)
+
+Okay, we got a nice looking button. All we need to do now is to give it some breathing room.
+
+This time however, instead of using static padding value, let’s use `Spacer` composable like this: `Spacer(modifier = Modifier.fillMaxHeight(0.8f))`. This composable is basically a blank space that you can put in between two other composable. We can also pass the `spacer`’s height in percentage float value `0% -> 0f and 100% -> 1f` so the space between two composable is always a dynamic yet proportional on any device dimension.
+
+Go ahead and put the spacer above in between the password text field and the sign in button:
+
+```kotlin
+LoginTextField(...)
+
+Spacer(modifier = Modifier.fillMaxHeight(0.8f))
+
+Button(...) {
+    ...
+}
+```
+
+Now when you run it, you will the sign in button in more reasonable and ergonomic location.
+
+![](assets/Screenshot_1619883989.jpg)<!-- {"width":369} -->
+
+### Completed Login UI<!-- {"fold":true} -->
+Our login screen’s UI is complete (minus the check box we will get to later)! The completed `LoginFragment` code should look as follows:
+
+```kotlin
+setContent {
+    val passwordTextFieldValue = remember { mutableStateOf("") }
+    val usernameTextFieldValue = remember { mutableStateOf("") }
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = "Summit Bank",
+            style = MaterialTheme.typography.h4,
+            fontWeight = FontWeight.Black,
+            modifier = Modifier.padding(vertical = 32.dp),
+        )
+
+        LoginTextField(
+            label = "Username",
+            textFieldValue = usernameTextFieldValue.value,
+            onTextFieldValueChange = { newUsername ->
+                usernameTextFieldValue.value = newUsername
+            },
+            maskTextInput = false,
+            modifier = Modifier
+                .padding(
+                    horizontal = 32.dp,
+                    vertical = 32.dp
+                )
+                .fillMaxWidth()
+        )
+
+        LoginTextField(
+            label = "Password",
+            textFieldValue = passwordTextFieldValue.value,
+            onTextFieldValueChange = { newUsername ->
+                passwordTextFieldValue.value = newUsername
+            },
+            maskTextInput = true,
+            modifier = Modifier
+                .padding(horizontal = 32.dp)
+                .fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.fillMaxHeight(0.8f))
+
+        Button(
+            onClick = { /* TODO */ },
+            modifier = Modifier
+                .padding(horizontal = 32.dp)
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = "Sign In",
+                style = MaterialTheme.typography.button
+            )
+        }
+    }
+}
+```
