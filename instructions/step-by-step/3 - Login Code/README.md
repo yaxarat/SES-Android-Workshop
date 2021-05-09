@@ -316,7 +316,7 @@ Here we are replacing our button with one of the compose’s default loading ind
 
 Run the app and see the change!
 
-![](assets/Kapture%202021-05-09%20at%2010.20.07.gif)<!-- {"width":407} -->
+<img src="assets/Kapture%202021-05-09%20at%2010.20.07.gif" width="400" />
 
 Everything is working! Notice how the loading indicator does not go away. But that’s okay! This is because our sign in succeeded and we didn’t put in any logic to take away the indicator for that case. Why? Because we would be transferred to the details screen anyways!
 
