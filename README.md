@@ -9,7 +9,7 @@ The resulting app will feature the following:
 * A single activity app, with 2 fragments representing the 2 screens
 * [Jetpack Compose](https://developer.android.com/jetpack/compose), the Android’s modern toolkit for building native UI
 * Asynchronous programming using [Kotlin Coroutines﻿](https://www.youtube.com/watch?v=ZTDXo0-SKuU)
-* Local data storage for user credentials using [DataStore](https://developer.android.com/topic/libraries/architecture/datastore)
+* Local data storage for user credentials using [SharedPreference](https://developer.android.com/training/data-storage/shared-preferences)
 * Fragment to fragment data transfer using [Results API](https://developer.android.com/guide/fragments/communicate#fragment-result)
 * Real networking & JSON parsing for login using modern Android libraries
 
