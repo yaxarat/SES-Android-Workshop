@@ -8,7 +8,7 @@ IDE settings that I like to use for the workshop.
 ## Project Setup
 You will need to set up your Android development environment and launch the `Start-Here`
 
-1. Install Android Studio Arctic Fox (Canary Build) from [here](https://developer.android.com/studio/preview).
+1. Install Android Studio Arctic Fox (Beta Build) from [here](https://developer.android.com/studio/preview).
 2. Clone this repository.
 3. Open the `Start` project folder in Android Studio.
 4. Run the project on a [physical device or emulator](https://developer.android.com/training/basics/firstapp/running-app).
