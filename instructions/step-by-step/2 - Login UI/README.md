@@ -205,10 +205,10 @@ Notice how the current state of the text field value is being exposed in `value`
 ### State in Compose<!-- {"fold":true} -->
 The concept of state is at the core of Compose. The reason we saw the text field not update upon key entries was because the `OutlinedTextField` doesn't update itself—it updates when its `value` parameter changes. This is due to how composition and recomposition (UI updates) work in Compose.
 
->**Key Term:** Composition: a description of the UI built by Jetpack Compose when it executes composables.
+>**Key Term:** Composition: when a UI gets drawn on the screen
 >
->**Initial composition:** creation of a Composition by running composables the first time.
-**Recomposition:** re-running composables to update the Composition when data changes.
+>**Initial composition:** when the UI is drawn for the first time on the screen
+**Recomposition:** re-drawing the UI to match the updated state. It's important to note that only the UIs which represent the changed data is recomposed, other UIs are not re-drawing.
 
 ### Remember the MutableState<!-- {"fold":true} -->
 To update our  `OutlinedTextField` , we need to pass in a value that represents the state of the TextField and add code to update the state when the value of the TextField changes.
@@ -296,10 +296,11 @@ setContent {
 
 Run the app again and confirm that everything still works.
 
-### State hoisting<!-- {"fold":true} -->
-Before we try and generalize our `LoginTextField` to accommodate both username and password field, we need to learn about the concept of state hoisting.
+### Re-using the UI state<!-- {"fold":true} -->
+When we try and generalize our `LoginTextField` to accommodate both username and password field, we need to consider the following.
 
-When a composable holds its own state like in our `LoginTextField`, it makes the composable hard to reuse and test, and it also keeps the composable tightly coupled to how its state is stored. Instead, you should make this a stateless composable—a composable that doesn't hold any state.
+When a composable holds its own "hard coded" state like in our `LoginTextField`, it makes the composable hard to reuse. 
+For example, take a look at how we are defining the label for the field: `Text(text = "Username")`. With its field defined this way, there is no way to re-use this UI - for a password field for instance. Instead, you should make this a stateless composable—a UI that doesn't hold any "hard coded" state. To do this, we can simply pass in those fields through constructor.
 
 ```kotlin
 @Composable
@@ -319,12 +320,6 @@ fun LoginTextField() {
     )
 }
 ```
-
-To do this, you can use state hoisting. State hoisting is a programming pattern where you move the state of a composable to the caller of that composable. A simple way to do this is by replacing the state with a parameter and using lambdas to represent events.
-
-When applied to composables, this often means introducing two parameters to the composable:
-* `value`: T: the current value to display.
-* `onValueChange: (T) -> Unit`: an event that requests the value to change where T is the proposed new value.
 
 So, to make our `LoginTextField` a state less composable, we need to refactor it to something like below:
 
@@ -350,11 +345,15 @@ fun LoginTextField(
 }
 ```
 
-By hoisting the state out of `LoginTextField`, it's easier to reason about the composable, reuse it in different situations, and test. It is decoupled from how its state is stored. Now when we want to modify `LoginFragment`, we don't have to change how `LoginTextField` is implemented. 
+To do this, you can use a concept called state hoisting. State hoisting is a programming pattern where you move the state of a composable to the caller of that composable. A simple way to do this is by replacing the state with a parameter and using lambdas to represent events.
 
-You also notice the `lambda` `onTextFieldValueChange` that it can call when it wants to request the state change.
+Notice the `lambda` `onTextFieldValueChange` that it can call when it wants to request the state change.
 
-`Lambdas` are the most common way to describe events on a composable. In this example, you define an event called `onTextFieldValueChange` using a `lambda` that takes a `String`, using Kotlin's function type syntax: `(String) -> Unit`. 
+State hoisting often means introducing two parameters to the composable:
+* `value`: T: the current value to display.
+* `onValueChange: (T) -> Unit`: an event that requests the value to change where T is the proposed new value.
+
+`Lambdas` are the most common way to describe events on a composable. It is basically a function stored in a variable. In this example, you define an event called `onTextFieldValueChange` using a `lambda` that takes a `String`, using Kotlin's function type syntax: `(String) -> Unit`. 
 
 The lambda is called `onTextFieldValueChange`—present tense, as **the event doesn't mean the state has already changed**, but rather that the **composable is requesting that the event handler change it**.
 
@@ -384,12 +383,6 @@ setContent {
 ```
 
 You will soon see this in action when we create password text field.
-
-### Unidirectional Data Flow<!-- {"fold":true} -->
-
-![](assets/PNG%20image-29EA23CDEFB7-1.png)<!-- {"width":444} -->
-
-The pattern where the state goes down, and events go up is called a unidirectional data flow. In this case, the state goes down from `LoginFragment` to `LoginTextField` and events go up from `LoginTextField` to `LoginFragment`. By following unidirectional data flow, you can decouple composables that display state in the UI from the parts of your app that store and change state.
 
 ### Create Password Text Field<!-- {"fold":true} -->
 Now we know roughly how the state of a composable function should be handled, let’s apply what we learned by giving the ability to `LoginTextField` to be used both as username field and password field.

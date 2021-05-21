@@ -28,7 +28,7 @@ import com.summit.summitproject.ui.screens.summary.SummaryFragment
 class LoginFragment : Fragment() {
 
     /**
-     * Get a a property delegate to access [LoginViewModel] by default scoped to this Fragment.
+     * Get a an access [LoginViewModel] scoped to this Fragment.
      */
     private val viewModel: LoginViewModel by viewModels()
 
