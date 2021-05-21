@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -30,7 +33,16 @@ class LoginFragment : Fragment() {
          * Set the Jetpack Compose UI content for this view.
          */
         setContent {
-            Text(text = "Welcome to the Summit!")
+            Column(horizontalAlignment = CenterHorizontally) {
+                // Text is also a composable function.
+                Text("Text 1")
+                Text("Text 2")
+                Text("Text 3")
+                // So is Button.
+                Button(onClick = { }) {
+                    Text("A Button Text")
+                }
+            }
         }
     }
 }

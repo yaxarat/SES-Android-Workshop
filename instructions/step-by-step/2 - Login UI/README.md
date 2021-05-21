@@ -16,7 +16,7 @@ And from within these composable functions, you can use one or more of other cus
 ```kotlin
 @Composable
 fun ThreeTextAndOneButton() {
-    Column(horizontalAlignment = CenterHorizontally) {
+    Column() {
         // Text is also a composable function.
         Text("Text 1")
         Text("Text 2")

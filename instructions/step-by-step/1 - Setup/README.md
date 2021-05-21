@@ -33,6 +33,11 @@ lines at the top of your code files as you write code.
 
 <img src="assets/ide-preferences.png" width="500" />
 
+Even after enabling auto-import, you might get some import errors like below that may be confusing. If you get them, you can try importing by `right click -> show context action -> import`.
+If the problem persist, you can scroll to the bottom of each section and copy all of the import statement included in the final code block.
+
+<img src="assets/import.png" width="500" />
+
 Finally, make copy this directory layout options to have the same visibility and package structure as we will be referencing throughout the guide.
 
 <img src ="assets/middle-package.png" width="500" />
