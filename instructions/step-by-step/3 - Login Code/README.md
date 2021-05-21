@@ -46,7 +46,7 @@ data class LoginState(
 )
 ```
 
-Any variable which is used to depict what a view component is currently doing is its state. View is currently Username entered, Password entered, Login Button enabled, Is User Logged In, etc. Altogether, these constitute state of any screen. You can think of this as a snapshot of current screen and all of its variables.
+Any variable which represent how the UI should appear is a `state` . For example, username entered, password entered, login button enabled, user logged in, etc. Altogether, these constitute state of any screen. You can think of this as a snapshot of current screen and all of its variables.
 
 Here is the explanation for each state values and what we use them for:
 * `username` the currently entered username
