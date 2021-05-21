@@ -158,7 +158,7 @@ LoginTextField(
 
 Run the app one more time and check everything is working as usual.
 
-### Calling login API
+### Enable Sign In Button
 Remember our login button composable?
 
 ```kotlin
@@ -177,7 +177,34 @@ Button(
 }
 ```
 
-Now is the time to provide its `onClick` function. We will follow the same pattern as how we updated the username and password fields earlier.
+Let's enable it when all fields are filled so a user can login to their account.
+
+We want to make sure the sign in button is enabled (default is disabled) once password and username is entered, and disabled if either of those two field is empty.
+
+We can do so by adding this check to run very time those two fields are updated:
+
+```kotlin
+fun enterUsername(username: String) {
+    state.value = currentState.copy(username = username)
+    shouldEnableSignInButton()
+}
+
+fun enterPassword(password: String) {
+    state.value = currentState.copy(password = password)
+    shouldEnableSignInButton()
+}
+
+private fun shouldEnableSignInButton() {
+    val usernameFilled = currentState.username.isNotEmpty()
+    val passwordFilled = currentState.password.isNotEmpty()
+    val enableSignIn = (usernameFilled && passwordFilled)
+
+    state.value = currentState.copy(enableSignIn = enableSignIn)
+}
+```
+
+### Calling login API
+Now is the time to provide its `onClick` function for the freshly enabled sign in button. We will follow the same pattern as how we updated the username and password fields earlier.
 
 In `LoginViewModel` add following:
 
@@ -197,7 +224,7 @@ fun signIn() {
 
 > `performSignIn` does not exist yet, but it is useful to have it here now to see the flow. 
 
-Here, we want to *perform sign in* with the current username and password, and also disable sign in button and show loading indicator while the sign in is being performed.
+Now we want to *perform sign in* with the current username and password, and also disable sign in button and show loading indicator while the sign in is being performed.
 
 Now, add the `performSignIn` function below like so:
 
@@ -236,30 +263,6 @@ private fun loginResultReceived(result: LoginResult) {
 ```
 
 Here we are saying that if the login result is success, we want to extract `accountInfo` from the result. Otherwise, we want to re-enable sign in button and hide the loading indicator so user can try logging in again.
-
-We also want to make sure the sign in button is enabled (default is disabled) once password and username is entered, and disabled if any of those two field is empty.
-
-We can do so by adding this check to run very time those two fields are updated:
-
-```kotlin
-fun enterUsername(username: String) {
-    state.value = currentState.copy(username = username)
-    shouldEnableSignInButton()
-}
-
-fun enterPassword(password: String) {
-    state.value = currentState.copy(password = password)
-    shouldEnableSignInButton()
-}
-
-private fun shouldEnableSignInButton() {
-    val usernameFilled = currentState.username.isNotEmpty()
-    val passwordFilled = currentState.password.isNotEmpty()
-    val enableSignIn = (usernameFilled && passwordFilled)
-
-    state.value = currentState.copy(enableSignIn = enableSignIn)
-}
-```
 
 Now that we have proper state manipulating code in place, let’s use these in our fragment.
 
