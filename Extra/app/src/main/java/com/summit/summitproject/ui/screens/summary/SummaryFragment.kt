@@ -100,6 +100,7 @@ class SummaryFragment : Fragment() {
                                 .height(120.dp)
                                 .fillMaxWidth()
                                 .padding(16.dp)
+                                .clickable { viewModel.tapped(index) }
                         )
                     }
                 }

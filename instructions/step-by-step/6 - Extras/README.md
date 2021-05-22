@@ -231,6 +231,62 @@ That should be it. Now let’s run the app and confirm everything is working as 
 ![](assets/Kapture%202021-05-21%20at%2012.44.05.gif)
 
 Looks great!
+## Selecting from a list
+Notice in our `LazyColumn` for transaction items, we have `itemsIndexed` function that provides `index`. That `index` corresponds with where the item is located in our list, making our list items aware of their own `index`. 
+
+```kotlin
+LazyColumn(modifier = Modifier.fillMaxHeight()) {
+    itemsIndexed(items = accountTransactions) { index, transaction ->
+        TransactionCard(
+            transaction = transaction,
+            modifier = Modifier
+                .height(120.dp)
+                .fillMaxWidth()
+                .padding(16.dp)
+        )
+    }
+}
+```
+
+This is useful especially when you want to perform certain operations on a specific item in a list. Knowing where exactly they are located within a list allows us to pick out out that item in our `viewModel`.
+
+Let’s see this in action.
+
+First, let’s create a dummy function that represents some sort of “work” being done on a selected item. For example, this can be something like showing a transaction detail page, showing more actions pop up that would allow user to report fraud, and so on. Here, we will just log the selected item to show that each tap indeed selects the correct item.
+
+Go to `SummaryViewModel` and create the following logging function:
+
+```kotlin
+fun tapped(transactionIndex: Int) {
+    Log.d(
+        this::class.java.simpleName,
+        "Tapped: ${ currentState.accountTransactions[transactionIndex] }"
+    )
+}
+```
+
+Here we are receiving the `index` of the item, and looking it up in the `accountTransactions` list. Once we find the item, we are then logging the details.
+
+Now all we have to do is call this function and pass in the appropriate `index` like so from the `SummaryFragment`:
+
+```kotlin
+LazyColumn(modifier = Modifier.fillMaxHeight()) {
+    itemsIndexed(items = accountTransactions) { index, transaction ->
+        TransactionCard(
+            transaction = transaction,
+            modifier = Modifier
+                .height(120.dp)
+                .fillMaxWidth()
+                .padding(16.dp)
+                .clickable { viewModel.tapped(index) } // New
+        )
+    }
+}
+```
+
+Now run the app and see the log output as you tap each items:
+
+![](assets/Kapture%202021-05-22%20at%2009.50.32.gif)
 
 Congratulations! You just made a full fledged app that incorporates many important principles of App development. If you are interested, I recommend you go through codes in `prebuilt` folder to see how they are implemented.
 
