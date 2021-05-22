@@ -2,7 +2,7 @@
 ## Remember Me Toggle
 In this section, we will work on persisting user data on the device using [SharedPreferences API](https://developer.android.com/reference/android/content/SharedPreferences). More specifically, we will be saving the user name if a user chooses to toggle on the “Remember me” check box.
 
-![](assets/login_screen.png)
+<img src="assets/login_screen.png" width="500">
 
 First, we have to start by creating the new checkbox component. The process is exactly the same as when we create other custom UI components. Create a new kotlin file named `CheckBoxWithLabel` inside our components directory:
 
