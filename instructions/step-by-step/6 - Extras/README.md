@@ -146,12 +146,12 @@ In there, we will define 2 `string` `constant`s. `constant` in kotlin is like a 
 
 ```kotlin
 /**
- * The key under which the **username**.
+ * The key under which the **username** is stored in sharedPreference.
  */
 const val PREF_USERNAME = "username"
 
 /**
- * The key under which the **remember me**.
+ * The key under which the **remember me** is stored in sharedPreference.
  */
 const val PREF_REMEMBER_ME = "remember_me"
 ```
