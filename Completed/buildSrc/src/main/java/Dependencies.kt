@@ -9,7 +9,7 @@ object Dependencies {
     const val versionCode = 1
     const val versionName = "1.0"
     const val jvmTarget = "1.8"
-    const val gradle = "7.0.0-beta01"
+    const val gradle = "7.0.0-beta02"
     const val kotlin = "1.4.32"
     const val kotlinCompilerExtension = "1.0.0-beta04"
     const val core_ktx = "1.3.2"
