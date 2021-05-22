@@ -6,7 +6,8 @@ In this section, we will work on persisting user data on the device using [Share
 
 First, we have to start by creating the new checkbox component. The process is exactly the same as when we create other custom UI components. Create a new kotlin file named `CheckBoxWithLabel` inside our components directory:
 
-![](assets/Screen%20Shot%202021-05-21%20at%2010.01.24%20AM.png)
+<img src="assets/Screen%20Shot%202021-05-21%20at%2010.01.24%20AM.png" width="500">
+
 
 This is a very simple component that combines `checkbox` and `text` `composables` in a `row`. We also want to be able to pass in its states via its constructor (state hoisting!), so the code to create this will look like this:
 
