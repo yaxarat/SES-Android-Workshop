@@ -19,7 +19,7 @@ If everything goes right, you should see the following screen when you hit “Ru
 <img src="assets/setup-app.png" width="500" />
 
 ## Phone/Emulator Setup
-Make sure your phone or emulator is not in dark mode when runnin gthis app. We did not adapt the app for a dark theme and using it in dark theme may cause some visual defects.
+Make sure your phone or emulator is not in dark mode when running this app. We did not adapt the app for a dark theme and using it in dark theme may cause some visual defects.
 
 ## IDE Setup (Optional)
 If you want the project structure to reflect the same file layout as what I will be using throughout the session, make sure to stay on or switch to `Android` and not `Project`.
