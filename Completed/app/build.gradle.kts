@@ -3,6 +3,7 @@ import dependencies.Dependencies
 plugins {
     id("com.android.application")
     id("kotlin-android")
+    id("name.remal.check-dependency-updates") version "1.4.1"
 }
 
 android {
