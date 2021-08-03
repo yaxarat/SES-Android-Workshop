@@ -38,15 +38,15 @@ class SummaryFragment : Fragment() {
 
         val sharedPreferences = requireContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
 
-        val name: String = sharedPreferences.getString(PREF_NAME, null) ?: return
-        val cardLastFour: String = sharedPreferences.getString(PREF_CARD_LAST_FOUR, null) ?: return
+        val accountHolderName: String = sharedPreferences.getString(PREF_NAME, null) ?: return
+        val accountLastFour: String = sharedPreferences.getString(PREF_CARD_LAST_FOUR, null) ?: return
         val transactionsJson: String = sharedPreferences.getString(PREF_TRANSACTIONS, null) ?: return
-        val transactions: List<Transaction> = decodeJsonToTransactions(transactionsJson)
+        val accountTransactions: List<Transaction> = decodeJsonToTransactions(transactionsJson)
 
         viewModel.updateAccountInfo(
-            accountHolderName = name,
-            accountLastFour = cardLastFour,
-            accountTransactions = transactions
+            accountHolderName = accountHolderName,
+            accountLastFour = accountLastFour,
+            accountTransactions = accountTransactions
         )
     }
 
