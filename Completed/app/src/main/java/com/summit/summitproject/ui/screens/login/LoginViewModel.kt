@@ -1,8 +1,10 @@
 package com.summit.summitproject.ui.screens.login
 
+import android.content.SharedPreferences
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.summit.summitproject.prebuilt.model.AccountInfo
+import com.summit.summitproject.prebuilt.model.ConversionHelper.encodeTransactionsToJson
 import com.summit.summitproject.prebuilt.service.LoginResult
 import com.summit.summitproject.prebuilt.service.LoginService
 import com.summit.summitproject.prebuilt.service.LoginServiceImpl
@@ -81,6 +83,19 @@ class LoginViewModel: ViewModel() {
             )
         }
     }
+
+    fun saveAccountInfo(
+        sharedPreferences: SharedPreferences,
+        accountInfo: AccountInfo
+    ) {
+        sharedPreferences.edit()
+            .apply {
+                putString(PREF_NAME, accountInfo.name)
+                putString(PREF_CARD_LAST_FOUR, accountInfo.cardLastFour)
+                putString(PREF_TRANSACTIONS, encodeTransactionsToJson(accountInfo.transactions))
+                apply()
+            }
+    }
 }
 
 /**
@@ -90,7 +105,6 @@ class LoginViewModel: ViewModel() {
 data class LoginState(
     val username: String = "",
     val password: String = "",
-    val rememberMe: Boolean = false,
     val enableSignIn: Boolean = false,
     val handlingSignIn: Boolean = false,
     val accountInfo: AccountInfo? = null
