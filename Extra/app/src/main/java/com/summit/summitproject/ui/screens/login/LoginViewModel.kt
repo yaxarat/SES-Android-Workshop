@@ -3,9 +3,8 @@ package com.summit.summitproject.ui.screens.login
 import android.content.SharedPreferences
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.google.gson.Gson
 import com.summit.summitproject.prebuilt.model.AccountInfo
-import com.summit.summitproject.prebuilt.model.Transaction
+import com.summit.summitproject.prebuilt.model.ConversionHelper.encodeTransactionsToJson
 import com.summit.summitproject.prebuilt.service.LoginResult
 import com.summit.summitproject.prebuilt.service.LoginService
 import com.summit.summitproject.prebuilt.service.LoginServiceImpl
@@ -93,7 +92,7 @@ class LoginViewModel: ViewModel() {
             .apply {
                 putString(PREF_NAME, accountInfo.name)
                 putString(PREF_CARD_LAST_FOUR, accountInfo.cardLastFour)
-                putString(PREF_TRANSACTIONS, Gson().toJson(accountInfo.transactions))
+                putString(PREF_TRANSACTIONS, encodeTransactionsToJson(accountInfo.transactions))
                 apply()
             }
     }

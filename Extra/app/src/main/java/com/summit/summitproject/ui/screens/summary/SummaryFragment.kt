@@ -19,15 +19,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.summit.summitproject.prebuilt.model.ConversionHelper.decodeJsonToTransactions
 import com.summit.summitproject.prebuilt.model.Transaction
 import com.summit.summitproject.ui.screens.components.TransactionCard
 import com.summit.summitproject.ui.screens.login.PREF_CARD_LAST_FOUR
 import com.summit.summitproject.ui.screens.login.PREF_NAME
 import com.summit.summitproject.ui.screens.login.PREF_TRANSACTIONS
 import com.summit.summitproject.ui.screens.login.SHARED_PREFERENCES_NAME
-import java.lang.reflect.Type
 
 class SummaryFragment : Fragment() {
     /**
@@ -40,16 +38,14 @@ class SummaryFragment : Fragment() {
 
         val sharedPreferences = requireContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
 
-
-        val name = sharedPreferences.getString(PREF_NAME, "")
-        val cardLastFour = sharedPreferences.getString(PREF_CARD_LAST_FOUR, "")
-        val json: String? = sharedPreferences.getString(PREF_TRANSACTIONS, "")
-        val type: Type = object : TypeToken<List<Transaction?>?>() {}.type
-        val transactions: List<Transaction> = Gson().fromJson(json, type)
+        val name: String = sharedPreferences.getString(PREF_NAME, null) ?: return
+        val cardLastFour: String = sharedPreferences.getString(PREF_CARD_LAST_FOUR, null) ?: return
+        val transactionsJson: String = sharedPreferences.getString(PREF_TRANSACTIONS, null) ?: return
+        val transactions: List<Transaction> = decodeJsonToTransactions(transactionsJson)
 
         viewModel.updateAccountInfo(
-            accountHolderName = name!!,
-            accountLastFour = cardLastFour!!,
+            accountHolderName = name,
+            accountLastFour = cardLastFour,
             accountTransactions = transactions
         )
     }
