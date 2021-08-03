@@ -26,13 +26,12 @@ import com.summit.summitproject.ui.screens.summary.SummaryFragment
 class LoginFragment : Fragment() {
 
     /**
-     * Get a an access [LoginViewModel] scoped to this Fragment.
+     * Get a an access [LoginViewModel] for this Fragment.
      */
     private val viewModel: LoginViewModel by viewModels()
 
     /**
-     * Create a [View] that can host Jetpack Compose UI content.
-     * Use setContent to supply the content composable function for the view.
+     * Create a [View] that can host our Jetpack Compose UI content.
      */
     override fun onCreateView(
         inflater: LayoutInflater,
