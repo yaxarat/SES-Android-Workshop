@@ -3,7 +3,9 @@ package com.summit.summitproject.ui.screens.login
 import android.content.SharedPreferences
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.google.gson.Gson
 import com.summit.summitproject.prebuilt.model.AccountInfo
+import com.summit.summitproject.prebuilt.model.Transaction
 import com.summit.summitproject.prebuilt.service.LoginResult
 import com.summit.summitproject.prebuilt.service.LoginService
 import com.summit.summitproject.prebuilt.service.LoginServiceImpl
@@ -59,10 +61,6 @@ class LoginViewModel: ViewModel() {
         )
     }
 
-    fun rememberMeChecked(isChecked: Boolean) {
-        state.value = currentState.copy(rememberMe = isChecked)
-    }
-
     private fun performSignIn(
         username: String,
         password: String
@@ -87,25 +85,17 @@ class LoginViewModel: ViewModel() {
         }
     }
 
-    /**
-     * Save the username and preference to local storage.
-     */
-    fun savePreference(sharedPreferences: SharedPreferences) {
-        val editor = sharedPreferences.edit()
-        val usernameToSave = if (currentState.rememberMe) currentState.username else ""
-
-        editor.putString(PREF_USERNAME, usernameToSave)
-        editor.putBoolean(PREF_REMEMBER_ME, currentState.rememberMe)
-        editor.apply()
-    }
-
-    fun restoreUserCredentials(sharedPreferences: SharedPreferences) {
-        if (sharedPreferences.getBoolean(PREF_REMEMBER_ME, false)) {
-            state.value = currentState.copy(
-                username = sharedPreferences.getString(PREF_USERNAME, "")!!,
-                rememberMe = true
-            )
-        }
+    fun saveAccountInfo(
+        sharedPreferences: SharedPreferences,
+        accountInfo: AccountInfo
+    ) {
+        sharedPreferences.edit()
+            .apply {
+                putString(PREF_NAME, accountInfo.name)
+                putString(PREF_CARD_LAST_FOUR, accountInfo.cardLastFour)
+                putString(PREF_TRANSACTIONS, Gson().toJson(accountInfo.transactions))
+                apply()
+            }
     }
 }
 
@@ -116,7 +106,6 @@ class LoginViewModel: ViewModel() {
 data class LoginState(
     val username: String = "",
     val password: String = "",
-    val rememberMe: Boolean = false,
     val enableSignIn: Boolean = false,
     val handlingSignIn: Boolean = false,
     val accountInfo: AccountInfo? = null

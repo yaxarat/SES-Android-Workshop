@@ -15,13 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import com.summit.summitproject.R
 import com.summit.summitproject.prebuilt.model.AccountInfo
-import com.summit.summitproject.ui.screens.components.CheckBoxWithLabel
 import com.summit.summitproject.ui.screens.components.LoginTextField
 import com.summit.summitproject.ui.screens.summary.SummaryFragment
 
@@ -41,9 +38,7 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View = ComposeView(requireContext()).apply {
 
-        val sharedPreferences = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
-
-        viewModel.restoreUserCredentials(sharedPreferences = sharedPreferences)
+        val sharedPreferences = requireContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
 
         /**
          * Set the Jetpack Compose UI content for this view.
@@ -54,7 +49,6 @@ class LoginFragment : Fragment() {
             val enabledSignIn: Boolean = viewModel.state.value.enableSignIn
             val handlingSignIn: Boolean = viewModel.state.value.handlingSignIn
             val accountInfo: AccountInfo? = viewModel.state.value.accountInfo
-            val rememberMeChecked: Boolean = viewModel.state.value.rememberMe
 
             /**
              * A layout composable that places its children in a vertical sequence.
@@ -97,21 +91,6 @@ class LoginFragment : Fragment() {
                         .fillMaxWidth()
                 )
 
-                CheckBoxWithLabel(
-                    label = "Remember me",
-                    isChecked = rememberMeChecked,
-                    onCheck = { isChecked ->
-                        viewModel.rememberMeChecked(isChecked)
-                    },
-                    modifier = Modifier
-                        .padding(
-                            horizontal = 32.dp,
-                            vertical = 16.dp
-                        )
-                        .fillMaxWidth()
-                        .wrapContentWidth(Alignment.End),
-                )
-
                 Spacer(modifier = Modifier.fillMaxHeight(0.8f))
 
                 if (handlingSignIn) {
@@ -119,7 +98,6 @@ class LoginFragment : Fragment() {
                 } else {
                     Button(
                         onClick = {
-                            viewModel.savePreference(sharedPreferences = sharedPreferences)
                             viewModel.signIn()
                         },
                         enabled = enabledSignIn,
@@ -140,17 +118,9 @@ class LoginFragment : Fragment() {
              */
             if (accountInfo != null) {
 
-                /**
-                 * Sets the given result for the requestKey. This result will be delivered to a [FragmentResultListener]
-                 * that is called with the same requestKey.
-                 */
-                setFragmentResult(
-                    requestKey = "requestKey",
-                    result = bundleOf(
-                        "name" to accountInfo.name,
-                        "cardLastFour" to accountInfo.cardLastFour,
-                        "transactions" to accountInfo.transactions
-                    )
+                viewModel.saveAccountInfo(
+                    sharedPreferences = sharedPreferences,
+                    accountInfo = accountInfo
                 )
 
                 /**

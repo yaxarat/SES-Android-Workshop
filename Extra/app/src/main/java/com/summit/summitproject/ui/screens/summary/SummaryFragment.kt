@@ -1,7 +1,7 @@
 package com.summit.summitproject.ui.screens.summary
 
+import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,13 +18,18 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.summit.summitproject.prebuilt.model.Transaction
 import com.summit.summitproject.ui.screens.components.TransactionCard
+import com.summit.summitproject.ui.screens.login.PREF_CARD_LAST_FOUR
+import com.summit.summitproject.ui.screens.login.PREF_NAME
+import com.summit.summitproject.ui.screens.login.PREF_TRANSACTIONS
+import com.summit.summitproject.ui.screens.login.SHARED_PREFERENCES_NAME
+import java.lang.reflect.Type
 
 class SummaryFragment : Fragment() {
-
     /**
      * Get a a property delegate to access [SummaryViewModel] by default scoped to this Fragment.
      */
@@ -33,28 +38,20 @@ class SummaryFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        /**
-         * Sets the [FragmentResultListener] for a given requestKey. Once this [Fragment] is at least in the STARTED state,
-         * any results set by setFragmentResult using the same requestKey will be delivered to the [FragmentResultListener.onFragmentResult] callback.
-         */
-        setFragmentResultListener("requestKey") { requestKey, bundle ->
-            // Any type that can be put in a Bundle is supported
-            val accountHolderName: String? = bundle.getString("name")
-            val accountLastFour: String? = bundle.getString("cardLastFour")
-            val accountTransactions: List<Transaction>? = bundle.getSerializable("transactions") as? List<Transaction>
+        val sharedPreferences = requireContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
 
-            if (
-                accountHolderName != null &&
-                accountLastFour != null &&
-                accountTransactions != null
-            ) {
-                viewModel.updateAccountInfo(
-                    accountHolderName = accountHolderName,
-                    accountLastFour = accountLastFour,
-                    accountTransactions = accountTransactions
-                )
-            }
-        }
+
+        val name = sharedPreferences.getString(PREF_NAME, "")
+        val cardLastFour = sharedPreferences.getString(PREF_CARD_LAST_FOUR, "")
+        val json: String? = sharedPreferences.getString(PREF_TRANSACTIONS, "")
+        val type: Type = object : TypeToken<List<Transaction?>?>() {}.type
+        val transactions: List<Transaction> = Gson().fromJson(json, type)
+
+        viewModel.updateAccountInfo(
+            accountHolderName = name!!,
+            accountLastFour = cardLastFour!!,
+            accountTransactions = transactions
+        )
     }
 
     override fun onCreateView(
