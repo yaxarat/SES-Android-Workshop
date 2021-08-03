@@ -21,11 +21,14 @@ class MainActivity : AppCompatActivity() {
          */
         setContentView(R.layout.activity_main)
 
-        /**
-         * Immediately transition to the LoginFragment, since that is our default initial screen.
-         */
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.main_container, LoginFragment())
-            .commit()
+        if (savedInstanceState == null) {
+            /**
+             * Immediately transition to the LoginFragment, since that is our default initial screen.
+             * But make sure we only do this when there was no screen previously.
+             */
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, LoginFragment())
+                .commit()
+        }
     }
 }
