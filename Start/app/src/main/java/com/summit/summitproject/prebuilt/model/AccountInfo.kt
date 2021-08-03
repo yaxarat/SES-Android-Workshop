@@ -14,6 +14,6 @@ data class AccountInfo(
 ) {
     override fun toString(): String {
         return "name = $name, card last 4 digits: $cardLastFour" +
-            "\ntransactions: $transactions"
+                "\ntransactions: $transactions"
     }
 }
