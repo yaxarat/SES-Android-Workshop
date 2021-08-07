@@ -8,7 +8,6 @@ import com.summit.summitproject.prebuilt.model.Transaction
 /**
  * [ViewModel] for the [SummaryFragment]
  * This is where the business logic of the Login Fragment, and its screens live.
- * It follows the unidirectional MVI (Model View Intent) design pattern.
  */
 class SummaryViewModel : ViewModel() {
 
