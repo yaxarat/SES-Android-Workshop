@@ -8,7 +8,7 @@ IDE settings that I like to use for the workshop.
 ## Project Setup
 You will need to set up your Android development environment and launch the `Start-Here`
 
-1. Install Android Studio Arctic Fox (Beta Build) from [here](https://developer.android.com/studio/preview).
+1. Install Android Studio from [here](https://developer.android.com/studio).
 2. Clone this repository.
 3. Open the `Start` project folder in Android Studio.
 4. Run the project on a [physical device or emulator](https://developer.android.com/training/basics/firstapp/running-app).
@@ -37,7 +37,7 @@ Even after enabling auto-import, you might get some import errors like below tha
 
 <img src="assets/import.png" width="500" />
 
-Finally, make copy this directory layout options to have the same visibility and package structure as we will be referencing throughout the guide.
+Finally, copy this directory layout options to have the same visibility and package structure as we will be referencing throughout the guide.
 
 <img src ="assets/middle-package.png" width="500" />
 

@@ -1,5 +1,6 @@
 package com.summit.summitproject.ui.screens.summary
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.summit.summitproject.prebuilt.model.Transaction
@@ -28,6 +29,13 @@ class SummaryViewModel : ViewModel() {
             accountHolderName = accountHolderName,
             accountLastFour = accountLastFour,
             accountTransactions = accountTransactions
+        )
+    }
+
+    fun tapped(transactionIndex: Int) {
+        Log.d(
+            this::class.java.simpleName,
+            "Tapped: ${ currentState.accountTransactions[transactionIndex] }"
         )
     }
 }

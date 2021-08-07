@@ -1,5 +1,6 @@
 package com.summit.summitproject.ui.screens.login
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,9 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import com.summit.summitproject.R
 import com.summit.summitproject.prebuilt.model.AccountInfo
@@ -38,6 +37,8 @@ class LoginFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View = ComposeView(requireContext()).apply {
+
+        val sharedPreferences = requireContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
 
         /**
          * Set the Jetpack Compose UI content for this view.
@@ -117,17 +118,9 @@ class LoginFragment : Fragment() {
              */
             if (accountInfo != null) {
 
-                /**
-                 * Sets the given result for the requestKey. This result will be delivered to a [FragmentResultListener]
-                 * that is called with the same requestKey.
-                 */
-                setFragmentResult(
-                    requestKey = "requestKey",
-                    result = bundleOf(
-                        "name" to accountInfo.name,
-                        "cardLastFour" to accountInfo.cardLastFour,
-                        "transactions" to accountInfo.transactions
-                    )
+                viewModel.saveAccountInfo(
+                    sharedPreferences = sharedPreferences,
+                    accountInfo = accountInfo
                 )
 
                 /**

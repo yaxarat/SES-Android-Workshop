@@ -79,10 +79,7 @@ We can see that roughly, there are 4 types of UI components we would need to cre
 
 1. Text component to hold our bank's name
 2. Text input component to accept user name and password
-3. Check box component to let users decide if they want their username remembered
-4. And finally the sign in button itself
-
-We will table the check box component for now, since it is a part an additional content I want to cover if we have enough time later in this session.
+3. And finally the sign in button itself
 
 For now, let's start by creating what looks the easiest; the text component.
 
@@ -580,7 +577,7 @@ Now when you run it, you will the sign in button in more reasonable and ergonomi
 <img src="assets/Screenshot_1619883989.jpg" width="500" />
 
 ### Completed Login UI<!-- {"fold":true} -->
-Our login screen’s UI is complete (minus the check box we will get to later)! The completed `LoginFragment` code should look as follows:
+Our login screen’s UI is complete! The completed `LoginFragment` code should look as follows:
 
 ```kotlin
 setContent {
