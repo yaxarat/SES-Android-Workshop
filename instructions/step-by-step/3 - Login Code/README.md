@@ -3,7 +3,7 @@ This section covers adding behaviors to our login screen by writing Kotlin busin
 Here are the business logic we will be implementing:
 
 * Disable the "Sign In" button unless a username & password are entered.
-* Show loading dialog when the login “api call” is being made.
+* Show loading dialog when the login api call is being made.
 
 ## ViewModel<!-- {"fold":true} -->
 Our business logic for the login screen will be living inside a `viewModel` class that we will explore shortly. But before we go on, let’s review what view model is all about.
@@ -39,7 +39,6 @@ Let’s review them one by one from bottom up:
 data class LoginState(
     val username: String = "",
     val password: String = "",
-    val rememberMe: Boolean = false,
     val enableSignIn: Boolean = false,
     val handlingSignIn: Boolean = false,
     val accountInfo: AccountInfo? = null
@@ -51,7 +50,6 @@ Any variable which represent how the UI should appear is a `state` . For example
 Here is the explanation for each state values and what we use them for:
 * `username` the currently entered username
 * `password` the currently entered password
-* `rememberMe` if the username should be remembered for next time
 * `enableSignIn` if the sign in button should be enabled
 * `handlingSignIn` if the login api being actively called/listened for (used for loading indicator)
 * `accountInfo` the result we get back form login api. We pass this to the details screen.
@@ -104,7 +102,7 @@ One fix is easy: since `textFieldValue` is a `String`, just remove `.value` afte
 ```kotlin
 LoginTextField(
     label = "Username",
-    textFieldValue = usernameTextFieldValue, // used to be ...eldValue.value
+    textFieldValue = usernameTextFieldValue, // used to be ...TextFieldValue.value
     onTextFieldValueChange = { newUsername ->
         usernameTextFieldValue.value = newUsername
     },
@@ -513,7 +511,6 @@ class LoginViewModel: ViewModel() {
 data class LoginState(
     val username: String = "",
     val password: String = "",
-    val rememberMe: Boolean = false,
     val enableSignIn: Boolean = false,
     val handlingSignIn: Boolean = false,
     val accountInfo: AccountInfo? = null
