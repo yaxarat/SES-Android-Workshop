@@ -1,28 +1,11 @@
 # Summary UI<!-- {"fold":true} -->
-## Create SummaryFragment<!-- {"fold":true} -->
-Inside the screens folder, create summary folder and `SummaryFragment.kt` class within it.
+## Open SummaryFragment<!-- {"fold":true} -->
+Open `SummaryFragment.kt` class within the summary folder.
 
-![](assets/Kapture%202021-05-09%20at%2010.43.02.gif)
-
-From there, follow what we have in `LoginFragment` and set up the `onCreateView`:
-
-```kotlin
-class SummaryFragment : Fragment() {
-    
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View = ComposeView(requireContext()).apply {
-        setContent { 
-            
-        }
-    }
-}
-```
+<img src="assets/Screen Shot 2021-08-07 at 7.34.07 PM.png" width="800" />
 
 ### Divide and conquer
-Now that we have the foundation set up, let’s see what we want our finished product to look like:
+Let’s see what we want our finished product to look like:
 
 <img src="assets/summary_screen.png" width="400" />
 
