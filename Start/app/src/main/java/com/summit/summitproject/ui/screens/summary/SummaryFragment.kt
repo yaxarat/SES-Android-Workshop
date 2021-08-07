@@ -9,6 +9,12 @@ import androidx.fragment.app.Fragment
 
 class SummaryFragment : Fragment() {
 
+    // Called to do initial creation of a fragment.
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
+    // Called to have the fragment instantiate its user interface view.
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
