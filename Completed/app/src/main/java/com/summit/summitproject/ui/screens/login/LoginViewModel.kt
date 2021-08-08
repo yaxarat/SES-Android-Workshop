@@ -84,17 +84,15 @@ class LoginViewModel: ViewModel() {
         }
     }
 
-    fun saveAccountInfo(
-        sharedPreferences: SharedPreferences,
-        accountInfo: AccountInfo
-    ) {
-        sharedPreferences.edit()
-            .apply {
-                putString(PREF_NAME, accountInfo.name)
-                putString(PREF_CARD_LAST_FOUR, accountInfo.cardLastFour)
-                putString(PREF_TRANSACTIONS, encodeTransactionsToJson(accountInfo.transactions))
-                apply()
-            }
+    fun saveAccountInfo(sharedPreferences: SharedPreferences) {
+        val accountInfo = currentState.accountInfo ?: return
+        val editor = sharedPreferences.edit()
+
+        editor
+            .putString(PREF_NAME, accountInfo.name)
+            .putString(PREF_CARD_LAST_FOUR, accountInfo.cardLastFour)
+            .putString(PREF_TRANSACTIONS, encodeTransactionsToJson(accountInfo.transactions))
+            .apply()
     }
 }
 

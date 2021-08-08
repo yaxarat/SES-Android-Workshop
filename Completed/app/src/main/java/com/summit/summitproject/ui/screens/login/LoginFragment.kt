@@ -118,10 +118,7 @@ class LoginFragment : Fragment() {
              */
             if (accountInfo != null) {
 
-                viewModel.saveAccountInfo(
-                    sharedPreferences = sharedPreferences,
-                    accountInfo = accountInfo
-                )
+                viewModel.saveAccountInfo(sharedPreferences = sharedPreferences)
 
                 /**
                  * Replace current fragment with the next.
