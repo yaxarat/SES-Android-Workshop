@@ -1,15 +1,8 @@
 # Summary UI Logic<!-- {"fold":true} -->
-## Create SummaryViewModel
-In the same folder as `SummaryFragment`, go ahead and create a new kotlin class named `SummaryViewModel`.
+## Update SummaryViewModel
+In the same folder as `SummaryFragment`, go ahead and locate a kotlin class named `SummaryViewModel`.
 
-![](assets/Kapture%202021-05-09%20at%2014.50.16.gif)
-
-First thing first, let’s make sure this be a `viewModel` by extending the `ViewModel()`:
-
-```kotlin
-class SummaryViewModel : ViewModel() {
-}
-```
+<img src="assets/Screen Shot 2021-08-08 at 11.07.37 AM.png" width="700" />
 
 Now, at the very bottom of this file, **outside** the `SummaryViewModel` class, define the state we would need for the `SummaryFragment`. This should do it:
 
@@ -36,7 +29,7 @@ class SummaryViewModel : ViewModel() {
 
 These should be familiar to you since we used the exact same thing for the `LoginViewModel`.
 
-Now add the function to update/change our state once we receive the result from our `FragmentResultListener`.
+Now add the function to update/change our state once we receive the actual results from our api call.
 
 ```kotlin
 fun updateAccountInfo(
@@ -50,32 +43,6 @@ fun updateAccountInfo(
         accountTransactions = accountTransactions
     )
 }
-```
-
-Let’s use it in our `Fragment`. Start by creating a reference to the newly created `viewModel` so we can use it in the `fragment`.
-
-```kotlin
-class SummaryFragment : Fragment() {
-    private val viewModel: SummaryViewModel by viewModels()
-    ...
-```
-
-And replace our temporary logging code
-
-```kotlin
-Log.d("SummaryFragment", "accountHolderName: $accountHolderName\n" +
-    "accountLastFour: $accountLastFour\n" +
-    "accountTransactions: $accountTransactions")
-```
-
-with the new state changing function:
-
-```kotlin
-viewModel.updateAccountInfo(
-    accountHolderName = accountHolderName,
-    accountLastFour = accountLastFour,
-    accountTransactions = accountTransactions
-)
 ```
 
 Now we can observe these new values inside our `setContent`
@@ -154,4 +121,6 @@ Let’s run the app and see what we made.
 
 <img src="assets/Kapture%202021-05-09%20at%2015.21.25.gif" width="400" />
 
-Nice!
+As you can see, no data is being shown. This is expected, since we removed the place holder data for what is supposed to be the actual data. But, if you recall, we never used the `updateAccountInfo` function we created to update the actual data.
+
+We will do this in the next step :)

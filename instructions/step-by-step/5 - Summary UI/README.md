@@ -228,30 +228,3 @@ repeat(5) {
 Now let’s run it.
 
 <img src="assets/Screenshot_1620586002.png" width="400" />
-
-Love it!
-
-## Shared Preference<!-- {"fold":true} -->
-
-ADD DETAIL
-
-Let’s run the app and see what get’s logged. If you sign in and get to the summary page, you should see following in your logcat:
-```
-D/SummaryFragment: accountHolderName: Summiteers
-    accountLastFour: 7890
-    accountTransactions: [Merchant: Starbucks, Amount: $1.40, Merchant: Macy's, Amount: $35.00, Merchant: Giant, Amount: $64.37, Merchant: Amazon, Amount: $11.99, Merchant: Petsmart, Amount: $29.12, Merchant: Cava, Amount: $10.34, Merchant: AMC Theaters, Amount: $41.00, Merchant: Peet's Coffee, Amount: $6.49, Merchant: Best Buy, Amount: $674.11]
-```
-
-See how the tag `D/SummaryFragment` corresponds to our `SummaryFragment`? That means this is working!
-
-So far, your `LoginFragment` code should looks like this:
-
-```kotlin
-// Add fragment code here
-```
-
-And your `SummaryFragment`:
-
-```kotlin
-// Add viewmodel code here
-```

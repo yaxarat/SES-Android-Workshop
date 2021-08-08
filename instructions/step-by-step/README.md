@@ -9,3 +9,4 @@ This follows the same order as the workshop:
 - [4 - Fragment Transaction](4%20-%20Fragment%20Transaction/README.md)
 - [5 - Summary UI](5%20-%20Summary%20UI/README.md)
 - [6 - Summary Code](6%20-%20Summary%20Code/README.md)
+- [7 - Shared Preference](7%20-%20Sharedy%20Preference/README.md)
